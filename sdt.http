@@ -1,0 +1,284 @@
+@baseUrl = https://si-app.test/api/sdt
+@token = {{Login.response.body.token}}
+@studentUid = 6248990248420
+@newUserId = {{StoreUser.response.body.user.id}}
+@newRakId = {{StoreRak.response.body.rak.id}}
+@newDeviceId = {{StoreDevice.response.body.device.id}}
+@newLoanId = {{StoreLoan.response.body.loan.id}}
+
+
+
+
+
+############ 
+### AUTH ###
+
+# @name Login
+POST {{baseUrl}}/auth/login HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "Amrullah",
+    "password": "password"
+}
+
+###
+
+# @name Logout
+POST {{baseUrl}}/auth/logout HTTP/1.1
+Accept: application/json
+Content-Type: application/json 
+Authorization: Bearer {{token}}
+
+###
+
+# @name User
+GET {{baseUrl}}/auth/user HTTP/1.1
+Accept: application/json
+Content-Type: application/json 
+Authorization: Bearer {{token}}
+
+
+
+
+
+
+############ 
+### User ###
+
+# @name Users
+GET {{baseUrl}}/users HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name StoreUser
+POST {{baseUrl}}/users HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "username": "user_baru",
+    "password": "password",
+    "role": "operator"
+}
+
+###
+
+# @name FindUser
+GET {{baseUrl}}/users/{{newUserId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name UpdateUser
+PUT {{baseUrl}}/users/{{newUserId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "username": "user_update",
+    "role": "admin"
+}
+
+###
+
+# @name DestroyUser
+DELETE {{baseUrl}}/users/{{newUserId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+
+
+
+################
+### Students ###
+
+# @name Students
+GET {{baseUrl}}/students HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name UpdateStudents
+PUT {{baseUrl}}/students/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+
+
+
+############
+### Raks ###
+
+# @name Raks
+GET {{baseUrl}}/raks HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name StoreRak
+POST {{baseUrl}}/raks HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Rak Laptop"
+}
+###
+
+# @name FindRak
+GET {{baseUrl}}/raks/{{newRakId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name UpdateRak
+PUT {{baseUrl}}/raks/{{newRakId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Rak Laptop Update"
+}
+
+###
+
+# @name DestroyRak
+DELETE {{baseUrl}}/raks/{{newRakId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+
+
+
+
+################
+### Devices ###
+
+# @name Devices
+GET {{baseUrl}}/devices HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name StoreDevice
+POST {{baseUrl}}/devices HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Asus",
+    "uid": "876543245678",
+    "type": "1",
+    "rak_id": "1"
+}
+
+###
+
+# @name UpdateDevice
+PUT {{baseUrl}}/devices/{{newDeviceId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Samsung",
+    "uid": "876543245678",
+    "type": "0",
+    "rak_id": "2"
+}
+
+###
+
+# @name DestroyDevice
+DELETE {{baseUrl}}/devices/{{newDeviceId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name AssignDevice
+PUT {{baseUrl}}/devices/assign/{{newDeviceId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "student_id": "2"
+}
+
+###
+
+
+
+
+
+#############
+### Loans ###
+
+# @name Loans
+GET {{baseUrl}}/loans HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name StoreLoan
+POST {{baseUrl}}/loans HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "device_id": 3,
+    "user_id": 2
+}
+
+###
+
+# @name FindLoan
+GET {{baseUrl}}/loans/{{studentUid}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name UpdateLoan
+PUT {{baseUrl}}/loans/{{newLoanId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
