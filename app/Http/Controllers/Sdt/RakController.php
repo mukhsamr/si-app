@@ -13,8 +13,8 @@ class RakController extends Controller
     public function index(): JsonResponse
     {
         return response()->json([
-            'message' => 'Success',
-            'raks' => Rak::all(),
+            'success' => true,
+            'raks' => Rak::withCount('devices')->get(),
         ], 200);
     }
 
@@ -22,7 +22,7 @@ class RakController extends Controller
     {
         $rak = Rak::create($request->all());
         return response()->json([
-            'message' => 'Success',
+            'success' => true,
             'rak' => $rak,
         ], 201);
     }
@@ -30,7 +30,7 @@ class RakController extends Controller
     public function show(Rak $rak): JsonResponse
     {
         return response()->json([
-            'message' => 'Success',
+            'success' => true,
             'rak' => $rak
         ], 200);
     }
@@ -39,7 +39,7 @@ class RakController extends Controller
     {
         $rak->update($request->all());
         return response()->json([
-            'message' => 'Success',
+            'success' => true,
             'rak' => $rak
         ], 200);
     }
@@ -47,7 +47,7 @@ class RakController extends Controller
     public function destroy(Rak $rak): JsonResponse
     {
         return response()->json([
-            'message' => $rak->delete()
+            'success' => $rak->delete()
         ], 200);
     }
 }

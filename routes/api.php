@@ -23,6 +23,8 @@ Route::prefix('sdt')->middleware('connection:sdt')->group(function () {
     // Student
     Route::controller(SdtStudentController::class)->prefix('students')->middleware('auth:sdt')->group(function () {
         Route::get('/', 'index');
+        Route::get('{uid}', 'show');
+        Route::get('name-only', 'nameOnly');
         Route::put('update', 'update');
     });
 
@@ -31,7 +33,8 @@ Route::prefix('sdt')->middleware('connection:sdt')->group(function () {
 
     // Device
     Route::apiResource('devices', SdtDeviceController::class)->middleware('auth:sdt');
-    Route::put('devices/assign/{device}', [SdtDeviceController::class, 'assign'])->middleware('auth:sdt');
+    Route::get('devices/upload/template', [SdtDeviceController::class, 'templateDevice'])->middleware('auth:sdt')->name('devices.template');
+    Route::put('devices/assign/{device}', [SdtDeviceController::class, 'assign'])->middleware('auth:sdt')->name('devices.assign');
 
     // Loan
     Route::controller(SdtLoanController::class)->prefix('loans')->name('loans')->middleware('auth:sdt')->group(function () {

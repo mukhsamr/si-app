@@ -17,4 +17,12 @@ class RakRequest extends FormRequest
             'name' => 'required|unique:App\Models\Sdt\Rak,name,' . $this->rak?->id,
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Nama rak harus diisi.',
+            'name.unique' => 'Nama rak sudah ada.',
+        ];
+    }
 }

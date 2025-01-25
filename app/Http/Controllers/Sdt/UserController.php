@@ -13,8 +13,8 @@ class UserController extends Controller
     public function index(): JsonResponse
     {
         return response()->json([
-            'message' => 'Success',
-            'users' => User::all()
+            'success' => true,
+            'users' => User::withCount('loans')->get()
         ], 200);
     }
 
@@ -23,7 +23,7 @@ class UserController extends Controller
         $request->password = Hash::make($request->password);
 
         return response()->json([
-            'message' => 'Success',
+            'success' => true,
             'user' => User::create($request->all())
         ], 201);
     }
@@ -31,7 +31,7 @@ class UserController extends Controller
     public function show(User $user): JsonResponse
     {
         return response()->json([
-            'message' => 'Success',
+            'success' => true,
             'user' => $user
         ], 200);
     }
@@ -40,7 +40,7 @@ class UserController extends Controller
     {
         $user->update($request->all());
         return response()->json([
-            'message' => 'Success',
+            'success' => true,
             'user' => $user
         ], 200);
     }
@@ -48,7 +48,7 @@ class UserController extends Controller
     public function destroy(User $user): JsonResponse
     {
         return response()->json([
-            'message' => $user->delete()
+            'success' => $user->delete()
         ], 200);
     }
 }

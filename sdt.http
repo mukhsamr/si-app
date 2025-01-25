@@ -1,6 +1,6 @@
 @baseUrl = https://si-app.test/api/sdt
 @token = {{Login.response.body.token}}
-@studentUid = 6248990248420
+@studentUid = 2034289562735
 @newUserId = {{StoreUser.response.body.user.id}}
 @newRakId = {{StoreRak.response.body.rak.id}}
 @newDeviceId = {{StoreDevice.response.body.device.id}}
@@ -62,7 +62,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "username": "user_baru",
+    "username": "user_baru_lagi",
     "password": "password",
     "role": "operator"
 }
@@ -106,6 +106,22 @@ Authorization: Bearer {{token}}
 
 # @name Students
 GET {{baseUrl}}/students HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name ShowStudent
+GET {{baseUrl}}/students/{{studentUid}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name NameOnlyStudent
+GET {{baseUrl}}/students/name-only HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -238,6 +254,14 @@ Authorization: Bearer {{token}}
 
 ###
 
+# @name TemplateDevice
+GET {{baseUrl}}/devices/upload/template HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
 
 
 
@@ -260,7 +284,8 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "device_id": 3,
+    "student_id": 2,
+    "device_id": 4,
     "user_id": 2
 }
 
