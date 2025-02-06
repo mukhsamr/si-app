@@ -1,0 +1,190 @@
+@baseUrl = https://si-app.test/api/sbt
+@token = {{Login.response.body.token}}
+@studentId = 2
+@newUserId = {{StoreUser.response.body.user.id}}
+@newPlanId = {{StorePlan.response.body.plan.id}}
+
+
+
+
+
+############ 
+### AUTH ###
+
+# @name Login
+POST {{baseUrl}}/auth/login HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "lsamosir",
+    "password": "password"
+}
+
+###
+
+# @name Logout
+POST {{baseUrl}}/auth/logout HTTP/1.1
+Accept: application/json
+Content-Type: application/json 
+Authorization: Bearer {{token}}
+
+###
+
+# @name User
+GET {{baseUrl}}/auth/user HTTP/1.1
+Accept: application/json
+Content-Type: application/json 
+Authorization: Bearer {{token}}
+
+
+
+
+
+
+############ 
+### User ###
+
+# @name Users
+GET {{baseUrl}}/users HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name StoreUser
+POST {{baseUrl}}/users HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "username": "user_baru_lagi",
+    "password": "password",
+    "role": "operator"
+}
+
+###
+
+# @name FindUser
+GET {{baseUrl}}/users/{{newUserId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name UpdateUser
+PUT {{baseUrl}}/users/{{newUserId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "username": "user_update",
+    "role": "admin"
+}
+
+###
+
+# @name DestroyUser
+DELETE {{baseUrl}}/users/{{newUserId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+
+
+
+################
+### Students ###
+
+# @name Students
+GET {{baseUrl}}/students HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name ShowStudent
+GET {{baseUrl}}/students/{{studentId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name OnlyNameStudent
+GET {{baseUrl}}/students/only/name HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+
+
+
+
+################
+### Plans ###
+
+# @name Plans
+GET {{baseUrl}}/plans HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name StorePlan
+POST {{baseUrl}}/plans HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "title": "Ini Judul Action Plan"
+}
+
+###
+
+# @name FindPlan
+GET {{baseUrl}}/plans/{{newPlanId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name LatestPlan
+GET {{baseUrl}}/plans-latest?id=2 HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+###
+
+# @name UpdatePlan
+PUT {{baseUrl}}/plans/{{newPlanId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "type": "stepline",
+    "content": "Ini stepline fix"
+}
+
+###
+
+# @name DestroyPlan
+DELETE  {{baseUrl}}/plans/{{newPlanId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}

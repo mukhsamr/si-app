@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Sbt\AuthController as SbtAuthController;
+use App\Http\Controllers\Sbt\PlanController as SbtPlanController;
+use App\Http\Controllers\Sbt\StudentController as SbtStudentController;
 use App\Http\Controllers\Sdt\AuthController as SdtAuthController;
 use App\Http\Controllers\Sdt\DeviceController as SdtDeviceController;
 use App\Http\Controllers\Sdt\LoanController as SdtLoanController;
@@ -43,4 +46,34 @@ Route::prefix('sdt')->middleware('connection:sdt')->group(function () {
         Route::post('/', 'store')->name('.store');
         Route::put('{loan}', 'update')->name('.update');
     });
+});
+
+
+
+
+
+
+// SBT
+Route::prefix('sbt')->middleware('connection:sbt')->group(function () {
+
+    // Auth
+    Route::controller(SbtAuthController::class)->prefix('auth')->group(function () {
+        Route::post('login', 'login');
+        Route::post('logout', 'logout')->middleware('auth:sbt');
+        Route::get('user', 'user')->middleware('auth:sbt');
+    });
+
+    // // User
+    // Route::apiResource('users', SdtUserController::class)->middleware('auth:sdt');
+
+    // // Student
+    Route::controller(SbtStudentController::class)->prefix('students')->middleware('auth:sbt')->group(function () {
+        Route::get('/', 'index');
+        Route::get('{student}', 'show');
+        Route::get('only/name', 'onlyName');
+    });
+
+    // Plan
+    Route::apiResource('plans', SbtPlanController::class)->middleware('auth:sbt');
+    Route::get('/plans-latest', [SbtPlanController::class, 'latest'])->middleware('auth:sbt')->name('plans.latest');
 });

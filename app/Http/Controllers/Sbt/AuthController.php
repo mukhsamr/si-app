@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Http\Controllers\Sbt;
+
+use App\Http\Controllers\Controller;
+use App\Models\Sbt\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
+class AuthController extends Controller
+{
+
+    function login(Request $request): JsonResponse
+    {
+        $user = User::where('username', $request->username)->first();
+
+        if (! $user || ! Hash::check($request->password, $user?->password)) {
+            return response()->json([
+                'message' => 'Wrong credentials !!',
+            ], 401);
+        }
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+        $find_user = $user->student ?? $user->teacher;
+        $find_user->is_teacher = $user->teacher ? true : false;
+
+        return response()->json([
+            'user' => $find_user,
+            'token' => $token,
+        ], 200);
+    }
+
+    function logout(Request $request): JsonResponse
+    {
+        if ($request->user()->currentAccessToken() == null) {
+            return response()->json([
+                'message' => 'Unauthenticated',
+            ], 401);
+        }
+
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'token' => null
+        ], 200);
+    }
+
+    function user(Request $request): JsonResponse
+    {
+        return response()->json([
+            'user' => $request->user()
+        ], 200);
+    }
+}

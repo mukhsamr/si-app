@@ -41,10 +41,10 @@ return [
             'provider' => 'app',
         ],
 
-        // 'sbt' => [
-        //     'driver' => 'sanctum',
-        //     'provider' => 'sbt',
-        // ],
+        'sbt' => [
+            'driver' => 'sanctum',
+            'provider' => 'sbt',
+        ],
 
         'sdt' => [
             'driver' => 'sanctum',
@@ -75,10 +75,10 @@ return [
             'model' => env('APP_AUTH_MODEL', App\Models\User::class),
         ],
 
-        // 'sbt' => [
-        //     'driver' => 'eloquent',
-        //     'model' => env('SBT_AUTH_MODEL', App\Models\Sbt\User::class),
-        // ],
+        'sbt' => [
+            'driver' => 'eloquent',
+            'model' => env('SBT_AUTH_MODEL', App\Models\Sbt\User::class),
+        ],
 
         'sdt' => [
             'driver' => 'eloquent',
@@ -113,12 +113,12 @@ return [
         //     'throttle' => 60,
         // ],
 
-        // 'sbt' => [
-        //     'provider' => 'sbt',
-        //     'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-        //     'expire' => 60,
-        //     'throttle' => 60,
-        // ],
+        'sbt' => [
+            'provider' => 'sbt',
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
 
         'sdt' => [
             'provider' => 'sdt',
