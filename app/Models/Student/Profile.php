@@ -32,7 +32,7 @@ class Profile extends Model
 
     protected function photo(): Attribute
     {
-        $imagesPath = '/storage/students/images';
+        $imagesPath = '/storage/students/photo';
         return Attribute::make(
             get: fn($photo) => $photo ? url("{$imagesPath}/{$photo}") : null,
         );
