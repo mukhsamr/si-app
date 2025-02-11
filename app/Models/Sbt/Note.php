@@ -45,7 +45,7 @@ class Note extends Model
     function scopeWithAuthor(Builder $query)
     {
         return $query->addSelect([
-            'author' => Profile::select('name')->whereColumn('notes.user_id', 'profiles.user_id')->limit(1)
+            'author' => Profile::select('nickname')->whereColumn('notes.user_id', 'profiles.user_id')->limit(1)
         ]);
     }
 }
