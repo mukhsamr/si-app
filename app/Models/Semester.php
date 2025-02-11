@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models\Sbt;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Semester extends Model
 {
-    protected $guarded = ['id'];
+    protected $connection = 'app';
     public $timestamps = false;
-    protected $connection = 'sbt';
+    protected $guarded = ['id'];
 }

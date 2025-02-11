@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Models\Sbt;
+namespace App\Models;
 
-use DateTimeInterface;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Plan extends Model
+class Family extends Model
 {
+    use HasFactory;
+
     protected $guarded = ['id', 'created_at', 'updated_at'];
-    protected $connection = 'sbt';
+    protected $connection = 'app';
 
     protected function casts(): array
     {
@@ -19,13 +21,8 @@ class Plan extends Model
         ];
     }
 
-    protected function serializeDate(DateTimeInterface $date)
+    function students(): HasMany
     {
-        return $date->format('Y-m-d H:i:s');
-    }
-
-    function plan_details(): HasMany
-    {
-        return $this->hasMany(PlanDetail::class);
+        return $this->hasMany(Student::class);
     }
 }

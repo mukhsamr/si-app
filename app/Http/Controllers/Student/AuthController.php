@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Sbt;
+namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\Sbt\User;
+use App\Models\Student\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-
     function login(Request $request): JsonResponse
     {
         $user = User::where('username', $request->username)->first();
@@ -22,7 +21,6 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()->json([
             'token' => $token,
         ], 200);
@@ -45,6 +43,6 @@ class AuthController extends Controller
     {
         return response()->json([
             'profile' => $request->user()->profile
-        ], 200);
+        ]);
     }
 }

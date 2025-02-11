@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Sbt;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Sbt\User;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -38,13 +38,6 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => null
-        ], 200);
-    }
-
-    function profile(Request $request): JsonResponse
-    {
-        return response()->json([
-            'profile' => $request->user()->profile
         ], 200);
     }
 }

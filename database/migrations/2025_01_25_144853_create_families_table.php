@@ -6,12 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::connection('sbt')->create('families', function (Blueprint $table) {
+        Schema::connection('app')->create('families', function (Blueprint $table) {
             $table->id();
             $table->string('kk')->unique();
             $table->string('father_name');
@@ -24,11 +21,8 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::connection('sbt')->dropIfExists('families');
+        Schema::connection('app')->dropIfExists('families');
     }
 };

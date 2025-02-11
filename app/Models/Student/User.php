@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Models\Sbt;
+namespace App\Models\Student;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,7 +12,7 @@ class User extends Authenticatable
 {
     use HasFactory, HasApiTokens;
 
-    protected $connection = 'sbt';
+    protected $connection = 'student';
     protected $guarded = [
         'id',
         'created_at',
@@ -30,14 +29,19 @@ class User extends Authenticatable
         ];
     }
 
-
     // 
     function profile(): HasOne
     {
         return $this->hasOne(Profile::class);
     }
-    function notes(): HasMany
+
+    function plans(): HasMany
     {
-        return $this->hasMany(Note::class);
+        return $this->hasMany(Plan::class);
+    }
+
+    function latestPlan(): HasOne
+    {
+        return $this->hasOne(Plan::class)->latestOfMany();
     }
 }

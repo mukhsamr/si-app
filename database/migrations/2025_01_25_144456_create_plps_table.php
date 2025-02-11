@@ -6,25 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::connection('sbt')->create('grades', function (Blueprint $table) {
+        Schema::connection('app')->create('plps', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('grade');
+            $table->string('plp');
             $table->string('type');
 
-            $table->unique(['grade', 'type']);
+            $table->unique(['plp', 'type']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::connection('sbt')->dropIfExists('grades');
+        Schema::connection('app')->dropIfExists('plps');
     }
 };

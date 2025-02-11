@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'sdt'),
+        'guard' => env('AUTH_GUARD', 'app'),
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
@@ -37,7 +37,7 @@ return [
 
     'guards' => [
         'app' => [
-            'driver' => 'session',
+            'driver' => 'sanctum',
             'provider' => 'app',
         ],
 
@@ -49,6 +49,11 @@ return [
         'sdt' => [
             'driver' => 'sanctum',
             'provider' => 'sdt',
+        ],
+
+        'student' => [
+            'driver' => 'sanctum',
+            'provider' => 'student',
         ],
     ],
 
@@ -84,6 +89,11 @@ return [
             'driver' => 'eloquent',
             'model' => env('SDT_AUTH_MODEL', App\Models\Sdt\User::class),
         ],
+
+        'student' => [
+            'driver' => 'eloquent',
+            'model' => env('STUDENT_AUTH_MODEL', App\Models\Student\User::class),
+        ],
     ],
 
     /*
@@ -106,12 +116,12 @@ return [
     */
 
     'passwords' => [
-        // 'app' => [
-        //     'provider' => 'app',
-        //     'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-        //     'expire' => 60,
-        //     'throttle' => 60,
-        // ],
+        'app' => [
+            'provider' => 'app',
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
 
         'sbt' => [
             'provider' => 'sbt',
@@ -122,6 +132,13 @@ return [
 
         'sdt' => [
             'provider' => 'sdt',
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'student' => [
+            'provider' => 'student',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire' => 60,
             'throttle' => 60,

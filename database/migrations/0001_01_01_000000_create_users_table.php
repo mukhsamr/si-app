@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::connection('sbt')->create('users', function (Blueprint $table) {
+        Schema::connection('app')->create('users', function (Blueprint $table) {
             $table->id();
             $table->string('username')->unique();
             $table->string('password');
@@ -16,7 +16,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::connection('sbt')->create('sessions', function (Blueprint $table) {
+        Schema::connection('app')->create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();
@@ -28,7 +28,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::connection('sbt')->dropIfExists('users');
-        Schema::connection('sbt')->dropIfExists('sessions');
+        Schema::connection('app')->dropIfExists('users');
+        Schema::connection('app')->dropIfExists('sessions');
     }
 };

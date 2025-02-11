@@ -1,8 +1,8 @@
-@baseUrl = https://si-app.test/api/sbt
+@baseUrl = https://si-app.test/api/student
 @token = {{Login.response.body.token}}
-@studentId = 2
-@newNoteId = {{StoreNote.response.body.note.id}}
-@planId = 31
+@newUserId = {{StoreUser.response.body.user.id}}
+@newPlanId = {{StorePlan.response.body.plan.id}}
+
 
 
 
@@ -16,7 +16,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "username": "Admin",
+    "username": "192003037",
     "password": "password"
 }
 
@@ -40,69 +40,53 @@ Authorization: Bearer {{token}}
 
 
 
+############ 
+### User ###
 
-
-################
-### Students ###
-
-# @name Students
-GET {{baseUrl}}/students HTTP/1.1
+# @name Users
+GET {{baseUrl}}/users HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 ###
 
-# @name ShowStudent
-GET {{baseUrl}}/students/{{studentId}} HTTP/1.1
+# @name StoreUser
+POST {{baseUrl}}/users HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "username": "user_baru_lagi",
+    "password": "password"
+}
+
+###
+
+# @name FindUser
+GET {{baseUrl}}/users/{{newUserId}} HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 ###
 
-# @name NotesStudent
-GET {{baseUrl}}/students/{{studentId}}/notes HTTP/1.1
+# @name UpdateUser
+PUT {{baseUrl}}/users/{{newUserId}} HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
-###
-
-# @name LatestNoteStudent
-GET {{baseUrl}}/students/{{studentId}}/latest-note HTTP/1.1
-Accept: application/json
-Content-Type: application/json
-Authorization: Bearer {{token}}
+{
+    "username": "user_update",
+    "password": "ganti_password"
+}
 
 ###
 
-# @name PlansStudent
-GET {{baseUrl}}/students/{{studentId}}/plans HTTP/1.1
-Accept: application/json
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-###
-
-# @name PlanStudent
-GET {{baseUrl}}/students/{{studentId}}/plans/{{planId}} HTTP/1.1
-Accept: application/json
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-###
-
-# @name LatestPlanStudent
-GET {{baseUrl}}/students/{{studentId}}/latest-plan HTTP/1.1
-Accept: application/json
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-###
-
-# @name BioStudent
-GET {{baseUrl}}/students/{{studentId}}/bio HTTP/1.1
+# @name DestroyUser
+DELETE {{baseUrl}}/users/{{newUserId}} HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -114,54 +98,67 @@ Authorization: Bearer {{token}}
 
 
 ################
-### Notes ###
+### Plans ###
 
-# @name Notes
-GET {{baseUrl}}/notes?student_id=2 HTTP/1.1
+# @name Plans
+GET {{baseUrl}}/plans HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 ###
 
-# @name StoreNote
-POST {{baseUrl}}/notes HTTP/1.1
-Accept: application/json
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-    "student_id": 2,
-    "note": "Apa aja",
-    "type": 1
-}
-
-###
-
-# @name FindNote
-GET {{baseUrl}}/notes/{{newNoteId}} HTTP/1.1
-Accept: application/json
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-###
-
-# @name UpdateNote
-PUT {{baseUrl}}/notes/{{newNoteId}} HTTP/1.1
+# @name StorePlan
+POST {{baseUrl}}/plans HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "student_id": 2,
-    "note": "Sudah dipudate",
-    "type": 0
+    "title": "Ini Action Plan Lagi"
 }
 
 ###
 
-# @name DestroyNote
-DELETE {{baseUrl}}/notes/{{newNoteId}} HTTP/1.1
+# @name FindPlan
+GET {{baseUrl}}/plans/{{newPlanId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name UpdatePlan
+PUT {{baseUrl}}/plans/{{newPlanId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "type": "mayor_agenda",
+    "content": "Ini minor"
+}
+
+###
+
+# @name DestroyPlan
+DELETE  {{baseUrl}}/plans/{{newPlanId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name LatestPlan
+GET {{baseUrl}}/latest-plan HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name CountPlan
+GET {{baseUrl}}/count-plan HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}

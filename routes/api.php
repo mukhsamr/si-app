@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Sbt\AuthController as SbtAuthController;
-use App\Http\Controllers\Sbt\PlanController as SbtPlanController;
+use App\Http\Controllers\Sbt\NoteController as SbtNoteController;
 use App\Http\Controllers\Sbt\StudentController as SbtStudentController;
 use App\Http\Controllers\Sdt\AuthController as SdtAuthController;
 use App\Http\Controllers\Sdt\DeviceController as SdtDeviceController;
@@ -9,8 +10,42 @@ use App\Http\Controllers\Sdt\LoanController as SdtLoanController;
 use App\Http\Controllers\Sdt\RakController as SdtRakController;
 use App\Http\Controllers\Sdt\StudentController as SdtStudentController;
 use App\Http\Controllers\Sdt\UserController as SdtUserController;
+use App\Http\Controllers\Student\AuthController as StudentAuthController;
+use App\Http\Controllers\Student\PlanController as StudentPlanController;
+use App\Http\Controllers\Student\UserController as StudentUserController;
+use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
+
+
+// APP
+Route::prefix('app')->middleware('connection:app')->group(function () {
+
+    // Auth
+    Route::controller(AuthController::class)->prefix('auth')->group(function () {
+        Route::post('login', 'login');
+        Route::post('logout', 'logout')->middleware('auth:app');
+    });
+
+    // User
+    // Route::apiResource('users', UserController::class)->middleware('auth:app');
+
+    // Student
+    Route::apiResource('students', StudentController::class)->middleware('auth:app')
+        ->scoped(['student' => 'nis']);
+});
+
+
+
+
+
+
+
+
+
+
+
+// SDT
 Route::prefix('sdt')->middleware('connection:sdt')->group(function () {
 
     // Auth
@@ -66,14 +101,50 @@ Route::prefix('sbt')->middleware('connection:sbt')->group(function () {
     // // User
     // Route::apiResource('users', SdtUserController::class)->middleware('auth:sdt');
 
-    // // Student
-    Route::controller(SbtStudentController::class)->prefix('students')->middleware('auth:sbt')->group(function () {
-        Route::get('/', 'index');
-        Route::get('{student}', 'show');
-        Route::get('only/name', 'onlyName');
+    // Note
+    Route::apiResource('notes', SbtNoteController::class)->middleware('auth:sbt');
+
+    // Student
+    Route::controller(SbtStudentController::class)->prefix('students')->group(function () {
+        Route::get('/', 'index')->name('students.index');
+        Route::get('{student}', 'show')->name('students.show');
+        Route::get('{student}/notes', 'notes')->name('students.notes');
+        Route::get('{student}/latest-note', 'latestNote')->name('students.latest-note');
+
+        // STUDENT-API
+        Route::get('{student}/plans', 'getPlans')->name('students.plans');
+        Route::get('{student}/plans/{planId}', 'getPlan')->name('students.plan');
+        Route::get('{student}/latest-plan', 'getLatestPlan')->name('students.latest-plan');
+
+        // APP-API
+        Route::get('{student}/bio', 'getBio')->name('students.bio');
     });
 
     // Plan
-    Route::apiResource('plans', SbtPlanController::class)->middleware('auth:sbt');
-    Route::get('/plans-latest', [SbtPlanController::class, 'latest'])->middleware('auth:sbt')->name('plans.latest');
+    // Route::apiResource('plans', SbtPlanController::class)->middleware('auth:sbt');
+    // Route::get('/plans-latest', [SbtPlanController::class, 'latest'])->middleware('auth:sbt')->name('plans.latest');
+});
+
+
+
+
+
+
+// STUDENT
+Route::prefix('student')->middleware('connection:student')->group(function () {
+
+    // Auth
+    Route::controller(StudentAuthController::class)->prefix('auth')->group(function () {
+        Route::post('login', 'login');
+        Route::post('logout', 'logout')->middleware('auth:student');
+        Route::get('profile', 'profile')->middleware('auth:student');
+    });
+
+    // User
+    Route::apiResource('users', StudentUserController::class)->middleware('auth:student');
+
+    // Plan
+    Route::apiResource('plans', StudentPlanController::class)->middleware('auth:student');
+    Route::get('/latest-plan', [StudentPlanController::class, 'getLatestPlan'])->middleware('auth:student')->name('plans.latest-plan');
+    Route::get('/count-plan', [StudentPlanController::class, 'getCountPlan'])->middleware('auth:student')->name('plans.count-plan');
 });

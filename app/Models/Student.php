@@ -1,15 +1,11 @@
 <?php
 
-namespace App\Models\Sbt;
+namespace App\Models;
 
-use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 class Student extends Model
@@ -17,7 +13,8 @@ class Student extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $connection = 'sbt';
+    protected $connection = 'app';
+    protected $appends = ['age'];
 
     protected function casts(): array
     {
@@ -25,11 +22,6 @@ class Student extends Model
             'created_at' => 'datetime:Y-m-d H:i:s',
             'updated_at' => 'datetime:Y-m-d H:i:s',
         ];
-    }
-
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
     }
 
     protected function gender(): Attribute
@@ -47,6 +39,14 @@ class Student extends Model
         );
     }
 
+
+    protected function birthDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => $value ? Carbon::parse($value)->format('d-m-Y') : null
+        );
+    }
+
     protected function age(): Attribute
     {
         return Attribute::make(
@@ -54,14 +54,10 @@ class Student extends Model
         );
     }
 
-    // 
-    function notes(): HasMany
-    {
-        return $this->hasMany(Note::class);
-    }
 
-    function latestNote(): Hasone
+    // 
+    function family(): BelongsTo
     {
-        return $this->hasOne(Note::class)->latestOfMany();
+        return $this->belongsTo(Family::class);
     }
 }

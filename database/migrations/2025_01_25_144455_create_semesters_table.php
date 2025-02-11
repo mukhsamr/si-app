@@ -8,17 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::connection('sbt')->create('plps', function (Blueprint $table) {
+        Schema::connection('app')->create('semesters', function (Blueprint $table) {
             $table->id();
-            $table->string('plp');
-            $table->string('type');
+            $table->string('semester');
+            $table->string('year');
 
-            $table->unique(['plp', 'type']);
+            $table->unique(['semester', 'year']);
         });
     }
 
     public function down(): void
     {
-        Schema::connection('sbt')->dropIfExists('plps');
+        Schema::connection('app')->dropIfExists('semesters');
     }
 };
