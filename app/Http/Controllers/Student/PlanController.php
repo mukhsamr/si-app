@@ -97,4 +97,19 @@ class PlanController extends Controller
             'message' => 'Get count plan'
         ], 200);
     }
+
+    function upload(Request $request, Plan $plan): JsonResponse
+    {
+        $file = $request->file('plan');
+
+        $file_name = 'action-plan-' . $request->user()->profile->nis . '-' . $plan->id . '.pdf';
+        $file->storePubliclyAs('students/plan', $file_name);
+
+        $plan->update(['pdf' => $file_name]);
+
+        return response()->json([
+            'file' => $file_name,
+            'message' => 'File uploaded'
+        ], 200);
+    }
 }

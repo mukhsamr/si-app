@@ -13,6 +13,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->string('title');
+            $table->string('pdf')->nullable();
             $table->timestamps();
         });
     }

@@ -131,20 +131,23 @@ Route::prefix('sbt')->middleware('connection:sbt')->group(function () {
 
 
 // STUDENT
-Route::prefix('student')->middleware('connection:student')->group(function () {
+Route::prefix('student')->middleware('connection:student')->name('student.')->group(function () {
 
     // Auth
-    Route::controller(StudentAuthController::class)->prefix('auth')->group(function () {
-        Route::post('login', 'login');
-        Route::post('logout', 'logout')->middleware('auth:student');
-        Route::get('profile', 'profile')->middleware('auth:student');
+    Route::controller(StudentAuthController::class)->prefix('auth')->name('auth.')->group(function () {
+        Route::post('login', 'login')->name('login');
+        Route::post('logout', 'logout')->middleware('auth:student')->name('logout');
+        Route::get('profile', 'profile')->middleware('auth:student')->name('profile');
     });
 
     // User
-    Route::apiResource('users', StudentUserController::class)->middleware('auth:student');
+    // Route::apiResource('users', StudentUserController::class)->middleware('auth:student');
 
     // Plan
     Route::apiResource('plans', StudentPlanController::class)->middleware('auth:student');
-    Route::get('/latest-plan', [StudentPlanController::class, 'getLatestPlan'])->middleware('auth:student')->name('plans.latest-plan');
-    Route::get('/count-plan', [StudentPlanController::class, 'getCountPlan'])->middleware('auth:student')->name('plans.count-plan');
+    Route::controller(StudentPlanController::class)->middleware('auth:student')->name('plans.')->group(function () {
+        Route::get('plans-latest', 'getLatestPlan')->name('latest');
+        Route::get('plans-count', 'getCountPlan')->name('count');
+        Route::post('plans/{plan}/upload', 'upload')->name('upload');
+    });
 });
