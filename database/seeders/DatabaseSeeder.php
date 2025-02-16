@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
             // SdtSeeder::class
             // SbtSeeder::class
             // AppSeeder::class
-            StudentSeeder::class
+            // SantriSeeder::class
         ]);
     }
 }

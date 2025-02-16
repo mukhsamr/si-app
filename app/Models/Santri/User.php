@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Student;
+namespace App\Models\Santri;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +12,7 @@ class User extends Authenticatable
 {
     use HasFactory, HasApiTokens;
 
-    protected $connection = 'student';
+    protected $connection = 'santri';
     protected $guarded = [
         'id',
         'created_at',

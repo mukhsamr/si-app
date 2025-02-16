@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Student;
+namespace App\Http\Controllers\Santri;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Student\PlanDetailRequest;
-use App\Http\Requests\Student\PlanRequest;
-use App\Models\Student\Plan;
-use App\Models\Student\PlanDetail;
+use App\Http\Requests\Santri\PlanDetailRequest;
+use App\Http\Requests\Santri\PlanRequest;
+use App\Models\Santri\Plan;
+use App\Models\Santri\PlanDetail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::connection('student')->create('personal_access_tokens', function (Blueprint $table) {
+        Schema::connection('santri')->create('personal_access_tokens', function (Blueprint $table) {
             $table->id();
             $table->morphs('tokenable');
             $table->string('name');
@@ -22,6 +22,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::connection('student')->dropIfExists('personal_access_tokens');
+        Schema::connection('santri')->dropIfExists('personal_access_tokens');
     }
 };

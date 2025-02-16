@@ -10,9 +10,9 @@ use App\Http\Controllers\Sdt\LoanController as SdtLoanController;
 use App\Http\Controllers\Sdt\RakController as SdtRakController;
 use App\Http\Controllers\Sdt\StudentController as SdtStudentController;
 use App\Http\Controllers\Sdt\UserController as SdtUserController;
-use App\Http\Controllers\Student\AuthController as StudentAuthController;
-use App\Http\Controllers\Student\PlanController as StudentPlanController;
-use App\Http\Controllers\Student\UserController as StudentUserController;
+use App\Http\Controllers\Santri\AuthController as SantriAuthController;
+use App\Http\Controllers\Santri\PlanController as SantriPlanController;
+use App\Http\Controllers\Santri\UserController as SantriUserController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
@@ -130,22 +130,25 @@ Route::prefix('sbt')->middleware('connection:sbt')->group(function () {
 
 
 
-// STUDENT
-Route::prefix('student')->middleware('connection:student')->name('student.')->group(function () {
+// SANTRI
+Route::prefix('santri')->middleware('connection:santri')->name('santri.')->group(function () {
 
     // Auth
-    Route::controller(StudentAuthController::class)->prefix('auth')->name('auth.')->group(function () {
+    Route::controller(SantriAuthController::class)->prefix('auth')->name('auth.')->group(function () {
         Route::post('login', 'login')->name('login');
-        Route::post('logout', 'logout')->middleware('auth:student')->name('logout');
-        Route::get('profile', 'profile')->middleware('auth:student')->name('profile');
+        Route::post('logout', 'logout')->middleware('auth:santri')->name('logout');
+        Route::get('profile', 'profile')->middleware('auth:santri')->name('profile');
     });
 
     // User
-    // Route::apiResource('users', StudentUserController::class)->middleware('auth:student');
+    Route::controller(SantriUserController::class)->middleware('auth:santri')->prefix('users')->name('users.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('{student:nis}', 'show')->name('show');
+    });
 
     // Plan
-    Route::apiResource('plans', StudentPlanController::class)->middleware('auth:student');
-    Route::controller(StudentPlanController::class)->middleware('auth:student')->name('plans.')->group(function () {
+    Route::apiResource('plans', SantriPlanController::class)->middleware('auth:santri');
+    Route::controller(SantriPlanController::class)->middleware('auth:santri')->name('plans.')->group(function () {
         Route::get('plans-latest', 'getLatestPlan')->name('latest');
         Route::get('plans-count', 'getCountPlan')->name('count');
         Route::post('plans/{plan}/upload', 'upload')->name('upload');

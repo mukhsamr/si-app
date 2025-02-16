@@ -51,9 +51,9 @@ return [
             'provider' => 'sdt',
         ],
 
-        'student' => [
+        'santri' => [
             'driver' => 'sanctum',
-            'provider' => 'student',
+            'provider' => 'santri',
         ],
     ],
 
@@ -90,9 +90,9 @@ return [
             'model' => env('SDT_AUTH_MODEL', App\Models\Sdt\User::class),
         ],
 
-        'student' => [
+        'santri' => [
             'driver' => 'eloquent',
-            'model' => env('STUDENT_AUTH_MODEL', App\Models\Student\User::class),
+            'model' => env('STUDENT_AUTH_MODEL', App\Models\Santri\User::class),
         ],
     ],
 
@@ -137,8 +137,8 @@ return [
             'throttle' => 60,
         ],
 
-        'student' => [
-            'provider' => 'student',
+        'santri' => [
+            'provider' => 'santri',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire' => 60,
             'throttle' => 60,

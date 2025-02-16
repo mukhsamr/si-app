@@ -1,6 +1,5 @@
-@baseUrl = https://si-app.test/api/student
+@baseUrl = https://si-app.test/api/santri
 @token = {{Login.response.body.token}}
-@newUserId = {{StoreUser.response.body.user.id}}
 @newPlanId = {{StorePlan.response.body.plan.id}}
 
 
@@ -49,47 +48,15 @@ Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
-###
-
-# @name StoreUser
-POST {{baseUrl}}/users HTTP/1.1
-Accept: application/json
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-    "username": "user_baru_lagi",
-    "password": "password"
-}
 
 ###
 
 # @name FindUser
-GET {{baseUrl}}/users/{{newUserId}} HTTP/1.1
+GET {{baseUrl}}/users/192003037 HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
-###
-
-# @name UpdateUser
-PUT {{baseUrl}}/users/{{newUserId}} HTTP/1.1
-Accept: application/json
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-    "username": "user_update",
-    "password": "ganti_password"
-}
-
-###
-
-# @name DestroyUser
-DELETE {{baseUrl}}/users/{{newUserId}} HTTP/1.1
-Accept: application/json
-Content-Type: application/json
-Authorization: Bearer {{token}}
 
 
 

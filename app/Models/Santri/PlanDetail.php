@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Student;
+namespace App\Models\Santri;
 
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class PlanDetail extends Model
 {
     protected $guarded = ['id', 'created_at', 'updated_at'];
-    protected $connection = 'student';
+    protected $connection = 'santri';
 
     protected function casts(): array
     {
