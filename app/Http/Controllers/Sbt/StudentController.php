@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Sbt;
 use App\Http\Controllers\Controller;
 use App\Models\Sbt\Student;
 use App\Models\Student as AppStudent;
-use App\Models\Student\User as StdUser;
+use App\Models\Santri\User as SantriUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -45,10 +45,10 @@ class StudentController extends Controller
 
 
 
-    // STUDENT-API
+    // SANTRI-API
     function getPlans(Student $student): JsonResponse
     {
-        $student = StdUser::firstWhere('username', $student->nis);
+        $student = SantriUser::firstWhere('username', $student->nis);
         return response()->json([
             'plans' => $student->plans()->get(),
             'message' => 'Get all plans'
@@ -57,7 +57,7 @@ class StudentController extends Controller
 
     function getPlan(Student $student, string $planId): JsonResponse
     {
-        $student = StdUser::firstWhere('username', $student->nis);
+        $student = SantriUser::firstWhere('username', $student->nis);
         return response()->json([
             'plan' => $student->plans()->with('planDetails')->find($planId),
             'message' => 'Get plan'
@@ -66,7 +66,7 @@ class StudentController extends Controller
 
     function getLatestPlan(Student $student): JsonResponse
     {
-        $student = StdUser::firstWhere('username', $student->nis);
+        $student = SantriUser::firstWhere('username', $student->nis);
         $plan = $student->latestPlan()->first();
 
         if ($plan) {
