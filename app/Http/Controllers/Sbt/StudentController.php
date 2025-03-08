@@ -3,91 +3,106 @@
 namespace App\Http\Controllers\Sbt;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Sbt\StudentListResource;
+use App\Http\Resources\Sbt\StudentNoteResource;
+use App\Http\Resources\Sbt\StudentPlanResource;
+use App\Http\Resources\Sbt\StudentResource;
+use App\Http\Resources\StudentFamilyResource;
 use App\Models\Sbt\Student;
 use App\Models\Student as AppStudent;
 use App\Models\Santri\User as SantriUser;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class StudentController extends Controller
 {
-    function index(): JsonResponse
+    function index()
     {
-        return response()->json([
-            'students' => Student::select('id', 'name', 'nickname')->orderBy('name')->get(),
-            'message' => 'Get all students'
-        ], 200);
+        $students = AppStudent::select('id', 'nis', 'name', 'nickname', 'photo', 'birth_date')
+            ->with('currentGrades')
+            ->orderBy('name')
+            ->get();
+
+        return StudentResource::collection($students)
+            ->additional([
+                'message' => 'Get all students',
+                'status' => 'success'
+            ]);
     }
 
-    function show(Student $student): JsonResponse
+    function list(): JsonResource
     {
-        return response()->json([
-            'student' => $student->append('age'),
-            'message' => 'Get student'
-        ], 200);
+        $students = Student::select('id', 'nis', 'name', 'nickname', 'photo', 'birth_date')
+            ->orderBy('name')
+            ->get();
+
+        return StudentListResource::collection($students)
+            ->additional([
+                'message' => 'Get list students',
+                'status' => 'success'
+            ]);
     }
 
-    function notes(Student $student): JsonResponse
+    function show(AppStudent $student): JsonResource
     {
-        return response()->json([
-            'notes' => $student->notes()->withAuthor()->latest()->get(),
-            'message' => 'Get all notes'
-        ], 200);
+        return StudentFamilyResource::make($student->load('family'))
+            ->additional([
+                'message' => 'Get student',
+                'status' => 'success'
+            ]);
     }
 
-    function latestNote(Student $student): JsonResponse
+    function notes(Student $student): JsonResource
     {
-        return response()->json([
-            'note' => $student->latestNote()->withAuthor()->latest()->first(),
-            'message' => 'Get latest note'
-        ], 200);
+        $notes = $student->notes()->withAuthor()->latest()->get();
+        return StudentNoteResource::collection($notes)
+            ->additional([
+                'message' => 'Get student notes',
+                'status' => 'success'
+            ]);
     }
 
-
-
-    // SANTRI-API
-    function getPlans(Student $student): JsonResponse
+    function latestNote(Student $student): JsonResource
     {
-        $student = SantriUser::firstWhere('username', $student->nis);
-        return response()->json([
-            'plans' => $student->plans()->get(),
-            'message' => 'Get all plans'
-        ], 200);
+        $student = $student->latestNote()->withAuthor()->latest()->first();
+        return StudentNoteResource::make($student)
+            ->additional([
+                'message' => 'Get latest note',
+                'status' => 'success'
+            ]);
     }
 
-    function getPlan(Student $student, string $planId): JsonResponse
+    function plans(Student $student): JsonResource
     {
-        $student = SantriUser::firstWhere('username', $student->nis);
-        return response()->json([
-            'plan' => $student->plans()->with('planDetails')->find($planId),
-            'message' => 'Get plan'
-        ], 200);
+        $student = SantriUser::whereRelation('profile', 'nis', $student->nis)->first();
+        return StudentPlanResource::collection($student->plans()->latest()->get())
+            ->additional([
+                'message' => 'Get plans',
+                'status' => 'success'
+            ]);
     }
 
-    function getLatestPlan(Student $student): JsonResponse
+    function plan(Student $student, string $planId): JsonResource
     {
-        $student = SantriUser::firstWhere('username', $student->nis);
+        $student = SantriUser::whereRelation('profile', 'nis', $student->nis)->first();
+        return StudentPlanResource::make($student->plans()->with('planDetails')->find($planId))
+            ->additional([
+                'message' => 'Get plan',
+                'status' => 'success'
+            ]);
+    }
+
+    function latestPlan(Student $student): JsonResource
+    {
+        $student = SantriUser::whereRelation('profile', 'nis', $student->nis)->first();
         $plan = $student->latestPlan()->first();
 
-        if ($plan) {
-            $plan->count_plan = $student->plans()->count();
-        }
-
-        return response()->json([
-            'plan' => $plan,
-            'message' => 'Get latest plans'
-        ], 200);
-    }
-
-
-
-    // APP-API
-    function getBio(Student $student): JsonResponse
-    {
-        $student = AppStudent::where('nis', $student->nis)->with('family')->first();
-        return response()->json([
-            'student' => $student,
-            'message' => 'Get student biodata'
-        ], 200);
+        return StudentPlanResource::make($plan)
+            ->additional([
+                'message' => 'Get plan',
+                'status' => 'success',
+                'meta' => [
+                    'count_plan' => $student->plans()->count()
+                ]
+            ]);
     }
 }

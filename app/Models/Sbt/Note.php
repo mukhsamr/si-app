@@ -6,6 +6,7 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class Note extends Model
@@ -34,11 +35,48 @@ class Note extends Model
         );
     }
 
+    protected function file(): Attribute
+    {
+        $notesPath = '/storage/notes';
+        return Attribute::make(
+            get: function ($file) use ($notesPath) {
+                $src = $file ? url("{$notesPath}/{$file}") : null;
+                $type = '';
+
+                if ($file) {
+                    $filePath = public_path("storage/notes/{$file}");
+
+                    if (file_exists($filePath)) {
+                        $mimeType = mime_content_type($filePath);
+
+                        if (strpos($mimeType, 'image/') === 0) {
+                            $type = 'image';
+                        }
+                        if (strpos($mimeType, 'video/') === 0) {
+                            $type = 'video';
+                        }
+                    }
+                }
+
+                return [
+                    'src'  => $src,
+                    'type' => $type,
+                ];
+            }
+        );
+    }
+
+
     protected function summary(): Attribute
     {
         return Attribute::make(
             get: fn(mixed $value, array $attributes) => Str::limit($attributes['note'], 40, '...')
         );
+    }
+
+    function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class);
     }
 
     // 

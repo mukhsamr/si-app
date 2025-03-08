@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Unit;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,9 +12,9 @@ return new class extends Migration
         Schema::connection('app')->create('plps', function (Blueprint $table) {
             $table->id();
             $table->string('plp');
-            $table->string('type');
+            $table->enum('unit', Unit::values());
 
-            $table->unique(['plp', 'type']);
+            $table->unique(['plp', 'unit']);
         });
     }
 

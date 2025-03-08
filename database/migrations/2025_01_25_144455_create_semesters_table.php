@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('semester');
             $table->string('year');
+            $table->boolean('is_active')->default(0);
 
             $table->unique(['semester', 'year']);
         });

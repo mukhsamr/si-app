@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\ActiveStudentScope;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 
+#[ScopedBy([ActiveStudentScope::class])]
 class Student extends Model
 {
     use HasFactory;
@@ -59,5 +63,26 @@ class Student extends Model
     function family(): BelongsTo
     {
         return $this->belongsTo(Family::class);
+    }
+
+    function grades(): BelongsToMany
+    {
+        return $this->belongsToMany(Grade::class);
+    }
+
+    function plps(): BelongsToMany
+    {
+        return $this->belongsToMany(Plp::class);
+    }
+
+    // 
+    function scopeCurrentGrades()
+    {
+        return $this->grades()->where('semester_id', Semester::active()->first()->id);
+    }
+
+    function scopeCurrentPlps()
+    {
+        return $this->plps()->where('semester_id', Semester::active()->first()->id);
     }
 }

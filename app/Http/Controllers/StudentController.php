@@ -16,32 +16,38 @@ class StudentController extends Controller
         ], 200);
     }
 
-    function store(Request $request): JsonResponse
-    {
-        return response()->json([
-            'message' => ''
-        ], 200);
-    }
+    // function store(Request $request): JsonResponse
+    // {
+    //     return response()->json([
+    //         'message' => ''
+    //     ], 200);
+    // }
 
     function show(Student $student): JsonResponse
     {
+        $student->load([
+            'family',
+            'grades' => fn($query) => $query->whereActiveSemester(),
+            'plps' => fn($query) => $query->whereActiveSemester()
+        ]);
+
         return response()->json([
-            'student' => $student->load('family'),
+            'student' => $student,
             'message' => 'Get student'
         ], 200);
     }
 
-    function update(Request $request, string $id): JsonResponse
-    {
-        return response()->json([
-            'message' => ''
-        ], 200);
-    }
+    // function update(Request $request, string $id): JsonResponse
+    // {
+    //     return response()->json([
+    //         'message' => ''
+    //     ], 200);
+    // }
 
-    function destroy(string $id): JsonResponse
-    {
-        return response()->json([
-            'message' => ''
-        ], 200);
-    }
+    // function destroy(string $id): JsonResponse
+    // {
+    //     return response()->json([
+    //         'message' => ''
+    //     ], 200);
+    // }
 }

@@ -34,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 // Not Found (404)
                 if ($exception instanceof NotFoundHttpException) {
                     return response()->json([
+                        'status' => 'error',
                         'message' => 'Resource not found',
                     ], 404);
                 }
@@ -41,6 +42,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 // Method Not Allowed (405)
                 if ($exception instanceof MethodNotAllowedHttpException) {
                     return response()->json([
+                        'status' => 'error',
                         'message' => 'Method not allowed',
                     ], 405);
                 }
@@ -48,20 +50,23 @@ return Application::configure(basePath: dirname(__DIR__))
                 // Validation Error (422)
                 if ($exception instanceof ValidationException) {
                     return response()->json([
+                        'status' => 'error',
                         'message' => 'Validation error',
-                        'errors' => $exception->errors(),
+                        'error' => $exception->errors(),
                     ], 422);
                 }
 
                 // Authentication Error (401)
                 if ($exception instanceof AuthenticationException) {
                     return response()->json([
+                        'status' => 'error',
                         'message' => 'Unauthorized',
                     ], 401);
                 }
 
                 // Internal Server Error (500)
                 return response()->json([
+                    'status' => 'error',
                     'message' => 'Something went wrong!',
                     'error' => $exception->getMessage(),
                 ], 500);

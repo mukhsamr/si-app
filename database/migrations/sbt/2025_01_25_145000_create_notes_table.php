@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Unit;
 use App\Models\Sbt\Student;
 use App\Models\Sbt\User;
 use Illuminate\Database\Migrations\Migration;
@@ -14,8 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Student::class)->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnUpdate()->restrictOnDelete();
-            $table->string('note');
+            $table->string('title');
+            $table->enum('unit', Unit::values());
             $table->boolean('type')->default(0);
+            $table->text('note');
+            $table->string('file')->nullable();
             $table->timestamps();
         });
     }

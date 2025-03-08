@@ -1,7 +1,6 @@
 @baseUrl = https://si-app.test/api/app
 @token = {{Login.response.body.token}}
-@studentId = 2
-@studentNIK = 202103144
+@studentNIS = 202103144
 
 
 
@@ -43,7 +42,7 @@ Authorization: Bearer {{token}}
 ###
 
 # @name ShowStudent
-GET {{baseUrl}}/students/{{studentNIK}} HTTP/1.1
+GET {{baseUrl}}/students/{{studentNIS}} HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}

@@ -13,6 +13,7 @@ use App\Http\Controllers\Sdt\UserController as SdtUserController;
 use App\Http\Controllers\Santri\AuthController as SantriAuthController;
 use App\Http\Controllers\Santri\PlanController as SantriPlanController;
 use App\Http\Controllers\Santri\UserController as SantriUserController;
+use App\Http\Controllers\Sbt\SbtController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
@@ -89,7 +90,10 @@ Route::prefix('sdt')->middleware('connection:sdt')->group(function () {
 
 
 // SBT
-Route::prefix('sbt')->middleware('connection:sbt')->group(function () {
+Route::prefix('sbt')->middleware('connection:sbt')->name('sbt.')->group(function () {
+
+    // Home
+    Route::get('/', [SbtController::class, 'index']);
 
     // Auth
     Route::controller(SbtAuthController::class)->prefix('auth')->group(function () {
@@ -98,31 +102,24 @@ Route::prefix('sbt')->middleware('connection:sbt')->group(function () {
         Route::get('user', 'user')->middleware('auth:sbt');
     });
 
-    // // User
-    // Route::apiResource('users', SdtUserController::class)->middleware('auth:sdt');
+    // User
+    Route::put('users/{user}', [SdtUserController::class, 'update'])->middleware('auth:sbt');
 
     // Note
-    Route::apiResource('notes', SbtNoteController::class)->middleware('auth:sbt');
+    Route::apiResource('notes', SbtNoteController::class)->except('update')->middleware('auth:sbt');
+    Route::post('notes/{note}/update', [SbtNoteController::class, 'update'])->name('notes.update')->middleware('auth:sbt');
 
     // Student
-    Route::controller(SbtStudentController::class)->prefix('students')->group(function () {
-        Route::get('/', 'index')->name('students.index');
-        Route::get('{student}', 'show')->name('students.show');
-        Route::get('{student}/notes', 'notes')->name('students.notes');
-        Route::get('{student}/latest-note', 'latestNote')->name('students.latest-note');
-
-        // STUDENT-API
-        Route::get('{student}/plans', 'getPlans')->name('students.plans');
-        Route::get('{student}/plans/{planId}', 'getPlan')->name('students.plan');
-        Route::get('{student}/latest-plan', 'getLatestPlan')->name('students.latest-plan');
-
-        // APP-API
-        Route::get('{student}/bio', 'getBio')->name('students.bio');
+    Route::controller(SbtStudentController::class)->middleware('auth:sbt')->prefix('students')->name('students.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('list', 'list')->name('list');
+        Route::get('{student:nis}', 'show')->name('show');
+        Route::get('{student}/notes', 'notes')->name('notes');
+        Route::get('{student}/latest-note', 'latestNote')->name('latest-note');
+        Route::get('{student}/plans', 'plans')->name('plans');
+        Route::get('{student}/plans/{planId}', 'plan')->name('plan');
+        Route::get('{student}/latest-plan', 'latestPlan')->name('latest-plan');
     });
-
-    // Plan
-    // Route::apiResource('plans', SbtPlanController::class)->middleware('auth:sbt');
-    // Route::get('/plans-latest', [SbtPlanController::class, 'latest'])->middleware('auth:sbt')->name('plans.latest');
 });
 
 

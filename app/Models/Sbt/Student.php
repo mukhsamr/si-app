@@ -6,8 +6,6 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
@@ -41,7 +39,7 @@ class Student extends Model
 
     protected function photo(): Attribute
     {
-        $imagesPath = '/storage/students/photo';
+        $imagesPath = '/storage/students/avatar';
         return Attribute::make(
             get: fn($photo) => $photo ? url("{$imagesPath}/{$photo}") : null,
         );

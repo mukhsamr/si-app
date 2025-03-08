@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::connection('app')->create('grades', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('grade');
-            $table->string('type');
+            $table->boolean('type');
 
             $table->unique(['grade', 'type']);
         });

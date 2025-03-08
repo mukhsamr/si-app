@@ -1,8 +1,20 @@
 @baseUrl = https://si-app.test/api/sbt
-@token = {{Login.response.body.token}}
-@studentId = 2
+@token = {{Login.response.body.data.token}}
+@studentId = 98
+@studentNIS = 192002144
 @newNoteId = {{StoreNote.response.body.note.id}}
 @planId = 31
+
+
+
+
+############ 
+### HOME ###
+
+# @name Home
+GET {{baseUrl}}?nis=192002144 HTTP/1.1
+Accept: application/json
+Content-Type: application/json
 
 
 
@@ -30,8 +42,8 @@ Authorization: Bearer {{token}}
 
 ###
 
-# @name Profile
-GET {{baseUrl}}/auth/profile HTTP/1.1
+# @name User
+GET {{baseUrl}}/auth/user HTTP/1.1
 Accept: application/json
 Content-Type: application/json 
 Authorization: Bearer {{token}}
@@ -54,7 +66,7 @@ Authorization: Bearer {{token}}
 ###
 
 # @name ShowStudent
-GET {{baseUrl}}/students/{{studentId}} HTTP/1.1
+GET {{baseUrl}}/students/{{studentNIS}} HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -99,13 +111,6 @@ Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
-###
-
-# @name BioStudent
-GET {{baseUrl}}/students/{{studentId}}/bio HTTP/1.1
-Accept: application/json
-Content-Type: application/json
-Authorization: Bearer {{token}}
 
 
 
@@ -117,7 +122,7 @@ Authorization: Bearer {{token}}
 ### Notes ###
 
 # @name Notes
-GET {{baseUrl}}/notes?student_id=2 HTTP/1.1
+GET {{baseUrl}}/notes HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -132,8 +137,10 @@ Authorization: Bearer {{token}}
 
 {
     "student_id": 2,
+    "title": "Ini Judul Lagi",
+    "unit": "TAHFIDZ",
     "note": "Apa aja",
-    "type": 1
+    "type": 0
 }
 
 ###

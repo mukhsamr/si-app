@@ -2,25 +2,29 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Seeders\App\FamilySeeder;
+use Database\Seeders\App\GradeSeeder;
+use Database\Seeders\App\GradeStudentSeeder;
+use Database\Seeders\App\PlpSeeder;
+use Database\Seeders\App\PlpStudentSeeder;
+use Database\Seeders\App\SemesterSeeder;
+use Database\Seeders\App\StudentSeeder;
+use Database\Seeders\App\UserSeeder;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Hash;
 
 class AppSeeder extends Seeder
 {
     public function run(): void
     {
-        User::insert([
-            [
-                'username' => 'Admin',
-                'password' => Hash::make('password'),
-            ]
+        $this->call([
+            UserSeeder::class,
+            SemesterSeeder::class,
+            GradeSeeder::class,
+            PlpSeeder::class,
+            FamilySeeder::class,
+            StudentSeeder::class,
+            GradeStudentSeeder::class,
+            PlpStudentSeeder::class
         ]);
-
-        $file = File::get(storage_path('database/students.sql'));
-        DB::unprepared($file);
     }
 }

@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->string('kk')->unique();
             $table->string('father_name');
-            $table->string('father_job');
-            $table->string('mother_name')->nullable();
+            $table->string('father_job')->nullable();
+            $table->string('mother_name');
             $table->string('mother_job')->nullable();
             $table->unsignedInteger('children')->default(0);
             $table->text('address')->nullable();
