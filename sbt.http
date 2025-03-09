@@ -51,6 +51,20 @@ Authorization: Bearer {{token}}
 
 
 
+############ 
+### AUTH ###
+
+# @name UpdateUser
+PUT {{baseUrl}}/users/31 HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "username": "amru",
+    "password": "password"
+}
+
 
 
 

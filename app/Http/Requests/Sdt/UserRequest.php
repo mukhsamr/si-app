@@ -16,7 +16,7 @@ class UserRequest extends FormRequest
         return [
             'username' => 'required|unique:App\Models\Sdt\User,username,' . $this->user?->id,
             'password' => 'sometimes|required|min:8',
-            'role' => 'required|in:admin,operator,student',
+            'role' => 'sometimes|required|in:admin,operator,student',
         ];
     }
 
