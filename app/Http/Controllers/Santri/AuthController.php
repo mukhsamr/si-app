@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Santri;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Santri\UserResource;
 use App\Models\Santri\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -16,31 +18,31 @@ class AuthController extends Controller
 
         if (! $user || ! Hash::check($request->password, $user?->password)) {
             return response()->json([
+                'data' => [
+                    'token' => null
+                ],
                 'message' => 'Wrong credentials !!',
+                'status' => 'error'
             ], 401);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
+
         return response()->json([
-            'token' => $token,
+            'data' => [
+                'token' => $token
+            ],
+            'message' => 'Success login',
+            'status' => 'success'
         ], 200);
     }
 
-    function logout(Request $request): JsonResponse
+    function user(Request $request): JsonResource
     {
-        if ($request->user()->currentAccessToken() == null) {
-            $request->user()->currentAccessToken()->delete();
-        }
-
-        return response()->json([
-            'token' => null
-        ], 200);
-    }
-
-    function profile(Request $request): JsonResponse
-    {
-        return response()->json([
-            'profile' => $request->user()->profile
-        ]);
+        return UserResource::make($request->user()->with('profile')->first())
+            ->additional([
+                'message' => 'Get user',
+                'status' => 'success'
+            ]);
     }
 }

@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-
     function login(Request $request): JsonResponse
     {
         $user = User::where('username', $request->username)->first();
@@ -38,23 +37,12 @@ class AuthController extends Controller
         ], 200);
     }
 
-    function logout(Request $request): JsonResponse
-    {
-        if ($request->user()->currentAccessToken() == null) {
-            return response()->json([
-                'data' => null
-            ], 401);
-        }
-
-        $request->user()->currentAccessToken()->delete();
-
-        return response()->json([
-            'data' => null
-        ], 200);
-    }
-
     function user(Request $request): JsonResource
     {
-        return UserResource::make($request->user());
+        return UserResource::make($request->user())
+            ->additional([
+                'message' => 'Get user',
+                'status' => 'success'
+            ]);
     }
 }

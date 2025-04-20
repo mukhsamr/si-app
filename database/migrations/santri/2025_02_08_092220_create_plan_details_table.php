@@ -12,13 +12,7 @@ return new class extends Migration
         Schema::connection('santri')->create('plan_details', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Plan::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->enum('type', [
-                "title",
-                "timeline",
-                "stepline",
-                "mayor_agenda",
-                "minor_routine",
-            ]);
+            $table->enum('type', Plan::types());
             $table->text('content');
             $table->timestamps();
         });

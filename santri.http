@@ -1,6 +1,6 @@
 @baseUrl = https://si-app.test/api/santri
-@token = {{Login.response.body.token}}
-@newPlanId = {{StorePlan.response.body.plan.id}}
+@token = {{Login.response.body.data.token}}
+@newPlanId = {{StorePlan.response.body.data.id}}
 
 
 
@@ -21,16 +21,8 @@ Content-Type: application/json
 
 ###
 
-# @name Logout
-POST {{baseUrl}}/auth/logout HTTP/1.1
-Accept: application/json
-Content-Type: application/json 
-Authorization: Bearer {{token}}
-
-###
-
-# @name Profile
-GET {{baseUrl}}/auth/profile HTTP/1.1
+# @name User
+GET {{baseUrl}}/auth/user HTTP/1.1
 Accept: application/json
 Content-Type: application/json 
 Authorization: Bearer {{token}}
@@ -82,7 +74,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "title": "Ini Action Plan Lagi"
+    "title": "Ini Action Plan"
 }
 
 ###
@@ -102,7 +94,19 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "type": "mayor_agenda",
+    "title": "ganti judul"
+}
+
+###
+
+# @name UpdateDetailPlan
+PUT {{baseUrl}}/plans/{{newPlanId}}/detail HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "type": "minor_routine",
     "content": "Ini minor"
 }
 
@@ -117,15 +121,15 @@ Authorization: Bearer {{token}}
 ###
 
 # @name LatestPlan
-GET {{baseUrl}}/latest-plan HTTP/1.1
+GET {{baseUrl}}/plans/latest HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 ###
 
-# @name CountPlan
-GET {{baseUrl}}/count-plan HTTP/1.1
+# @name ClonePlan
+POST {{baseUrl}}/plans/10/clone HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}

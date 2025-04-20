@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Santri;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Santri\UserRequest;
+use App\Http\Resources\Santri\UserResource;
 use App\Models\Santri\User;
 use App\Models\Student;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserController extends Controller
 {
@@ -19,11 +21,12 @@ class UserController extends Controller
         ], 200);
     }
 
-    function show(Student $student): JsonResponse
+    function show(Student $student): JsonResource
     {
-        return response()->json([
-            'user' => $student->load('family'),
-            'message' => 'Get user'
-        ], 200);
+        return UserResource::make($student->user);
+        // return response()->json([
+        //     'user' => $student->load('family'),
+        //     'message' => 'Get user'
+        // ], 200);
     }
 }

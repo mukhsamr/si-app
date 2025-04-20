@@ -5,14 +5,17 @@ namespace App\Http\Controllers\Santri;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Santri\PlanDetailRequest;
 use App\Http\Requests\Santri\PlanRequest;
+use App\Http\Resources\Santri\PlanListResource;
+use App\Http\Resources\Santri\PlanResource;
 use App\Models\Santri\Plan;
 use App\Models\Santri\PlanDetail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class PlanController extends Controller
 {
-    function index(Request $request): JsonResponse
+    function index(Request $request): JsonResource
     {
         $plans = $request->user()
             ->plans()
@@ -24,78 +27,88 @@ class PlanController extends Controller
             return $plan;
         });
 
-        return response()->json([
-            'plans' => $plans,
-            'message' => 'Get all plans'
-        ], 200);
+        return PlanListResource::collection($plans)
+            ->additional([
+                'message' => 'Get all plans',
+                'status' => 'success'
+            ]);
     }
 
-    function store(PlanRequest $request): JsonResponse
+    function store(PlanRequest $request): JsonResource
     {
         $plan = $request
             ->user()
             ->plans()
-            ->create($request->all());
+            ->create($request->validated());
 
-        return response()->json([
-            'plan' => $plan,
-            'message' => 'Plan created'
-        ], 201);
+        return PlanResource::make($plan)
+            ->additional([
+                'message' => 'Plan created',
+                'status' => 'success'
+            ]);
     }
 
-    function show(Plan $plan): JsonResponse
+    function show(Plan $plan)
     {
-        return response()->json([
-            'plan' => $plan->load('planDetails'),
-            'message' => 'Get plan'
-        ], 200);
+        return PlanResource::make($plan)
+            ->additional([
+                'message' => 'Get plan',
+                'status' => 'success'
+            ]);
     }
 
-    function update(PlanDetailRequest $request, Plan $plan): JsonResponse
+    function update(Request $request, Plan $plan): JsonResource
+    {
+        $plan->update([
+            'title' => $request->title
+        ]);
+
+        return PlanResource::make($plan)
+            ->additional([
+                'message' => 'Plan updated',
+                'status' => 'success'
+            ]);
+    }
+
+    function updateDetail(PlanDetailRequest $request, Plan $plan): JsonResource
     {
         PlanDetail::updateOrCreate(
             ['plan_id' => $plan->id, 'type' => $request->type],
             ['content' => $request->content]
         );
 
-        return response()->json([
-            'message' => 'Plan updated'
-        ], 200);
+        return PlanResource::make($plan)
+            ->additional([
+                'message' => 'Plan detail updated',
+                'status' => 'success'
+            ]);
     }
 
     function destroy(Plan $plan): JsonResponse
     {
         $plan->delete();
         return response()->json([
-            'message' => 'Plan deleted'
+            'data' => null,
+            'message' => 'Plan deleted',
+            'status' => 'success'
         ], 200);
     }
 
-    function getLatestPlan(Request $request): JsonResponse
+    function latestPlan(Request $request): JsonResource
     {
         $latest_plan = $request
             ->user()
             ->latestPlan()
-            ->with('planDetails')
             ->first();
 
-        return response()->json([
-            'latest_plan' => $latest_plan,
-            'message' => 'Get latest plan'
-        ], 200);
-    }
-
-    function getCountPlan(Request $request): JsonResponse
-    {
-        $count_plan = $request
-            ->user()
-            ->plans()
-            ->count();
-
-        return response()->json([
-            'count_plan' => $count_plan,
-            'message' => 'Get count plan'
-        ], 200);
+        return PlanResource::make($latest_plan)
+            ->additional([
+                'message' => 'Get latest plan',
+                'status' => 'success',
+                'meta' => [
+                    'count_plan' => $request->user()->plans()->count()
+                ]
+            ]);
     }
 
     function upload(Request $request, Plan $plan): JsonResponse
@@ -109,7 +122,31 @@ class PlanController extends Controller
 
         return response()->json([
             'file' => $file_name,
-            'message' => 'File uploaded'
+            'message' => 'File uploaded',
+            'success' => true
         ], 200);
+    }
+
+    function clone(Request $request, Plan $plan)
+    {
+        $newPlan = $request
+            ->user()
+            ->plans()
+            ->create(['title' => $plan->title]);
+
+        $plan_details =  $plan->planDetails->map(function ($detail) {
+            return [
+                'type' => $detail->type,
+                'content' => $detail->content
+            ];
+        })->toArray();
+
+        $newPlan->planDetails()->createMany($plan_details);
+
+        return PlanResource::make($newPlan)
+            ->additional([
+                'message' => 'Plan cloned',
+                'status' => 'success'
+            ]);
     }
 }

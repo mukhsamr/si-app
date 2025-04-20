@@ -98,7 +98,6 @@ Route::prefix('sbt')->middleware('connection:sbt')->name('sbt.')->group(function
     // Auth
     Route::controller(SbtAuthController::class)->prefix('auth')->group(function () {
         Route::post('login', 'login');
-        Route::post('logout', 'logout')->middleware('auth:sbt');
         Route::get('user', 'user')->middleware('auth:sbt');
     });
 
@@ -133,21 +132,15 @@ Route::prefix('santri')->middleware('connection:santri')->name('santri.')->group
     // Auth
     Route::controller(SantriAuthController::class)->prefix('auth')->name('auth.')->group(function () {
         Route::post('login', 'login')->name('login');
-        Route::post('logout', 'logout')->middleware('auth:santri')->name('logout');
-        Route::get('profile', 'profile')->middleware('auth:santri')->name('profile');
-    });
-
-    // User
-    Route::controller(SantriUserController::class)->middleware('auth:santri')->prefix('users')->name('users.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('{student:nis}', 'show')->name('show');
+        Route::get('user', 'user')->middleware('auth:santri')->name('user');
     });
 
     // Plan
-    Route::apiResource('plans', SantriPlanController::class)->middleware('auth:santri');
-    Route::controller(SantriPlanController::class)->middleware('auth:santri')->name('plans.')->group(function () {
-        Route::get('plans-latest', 'getLatestPlan')->name('latest');
-        Route::get('plans-count', 'getCountPlan')->name('count');
-        Route::post('plans/{plan}/upload', 'upload')->name('upload');
+    Route::controller(SantriPlanController::class)->middleware('auth:santri')->prefix('plans')->name('plans.')->group(function () {
+        Route::get('latest', 'latestPlan')->name('latest');
+        Route::post('{plan}/upload', 'upload')->name('upload');
+        Route::post('{plan}/clone', 'clone')->name('clone');
+        Route::put('{plan}/detail', 'updateDetail')->name('updateDetail');
     });
+    Route::apiResource('plans', SantriPlanController::class)->middleware('auth:santri');
 });
