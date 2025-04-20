@@ -39,7 +39,8 @@ class AuthController extends Controller
 
     function user(Request $request): JsonResource
     {
-        return UserResource::make($request->user()->with('profile')->first())
+        $user = $request->user();
+        return UserResource::make($user->load('profile'))
             ->additional([
                 'message' => 'Get user',
                 'status' => 'success'
