@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Sbt\AuthController as SbtAuthController;
 use App\Http\Controllers\Sbt\NoteController as SbtNoteController;
 use App\Http\Controllers\Sbt\StudentController as SbtStudentController;
+use App\Http\Controllers\Sbt\UserController as SbtUserController;
 use App\Http\Controllers\Sdt\AuthController as SdtAuthController;
 use App\Http\Controllers\Sdt\DeviceController as SdtDeviceController;
 use App\Http\Controllers\Sdt\LoanController as SdtLoanController;
@@ -12,7 +13,6 @@ use App\Http\Controllers\Sdt\StudentController as SdtStudentController;
 use App\Http\Controllers\Sdt\UserController as SdtUserController;
 use App\Http\Controllers\Santri\AuthController as SantriAuthController;
 use App\Http\Controllers\Santri\PlanController as SantriPlanController;
-use App\Http\Controllers\Santri\UserController as SantriUserController;
 use App\Http\Controllers\Sbt\SbtController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
@@ -102,7 +102,7 @@ Route::prefix('sbt')->middleware('connection:sbt')->name('sbt.')->group(function
     });
 
     // User
-    Route::put('users/{user}', [SdtUserController::class, 'update'])->middleware('auth:sbt');
+    Route::put('users/{user}', [SbtUserController::class, 'update'])->middleware('auth:sbt');
 
     // Note
     Route::apiResource('notes', SbtNoteController::class)->except('update')->middleware('auth:sbt');

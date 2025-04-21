@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Sdt;
+namespace App\Http\Controllers\Sbt;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sbt\UserRequest;
