@@ -16,8 +16,8 @@ class StudentResource extends JsonResource
             'nickname' => $this->nickname,
             'photo' => $this->photo,
             'grades' => [
-                'pondok' => $this->currentGrades->where('type', 'pondok')->first()->grade,
-                'payung' => $this->currentGrades->where('type', 'payung')->first()->grade
+                'pondok' => $this->currentGrades->where('type', 'pondok')->first()?->grade,
+                'payung' => $this->currentGrades->where('type', 'payung')->first()?->grade
             ]
         ];
     }
