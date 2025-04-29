@@ -1,6 +1,6 @@
 @baseUrl = https://si-app.test/api/sbt
 @token = {{Login.response.body.data.token}}
-@studentId = 98
+@studentId = 18
 @studentNIS = 192002144
 @newNoteId = {{StoreNote.response.body.note.id}}
 @planId = 31
@@ -153,6 +153,7 @@ Authorization: Bearer {{token}}
     "student_id": 2,
     "title": "Ini Judul Lagi",
     "unit": "TAHFIDZ",
+    "category": "KARAKTER",
     "note": "Apa aja",
     "type": 0
 }

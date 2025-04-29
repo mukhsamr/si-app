@@ -15,6 +15,7 @@ class NoteResource extends JsonResource
             'title' => $this->title,
             'unit' => Unit::from($this->unit),
             'type' => $this->type,
+            'category' => $this->category,
             'summary' => $this->summary,
             'note' => $this->note,
             'file' => $this->file,

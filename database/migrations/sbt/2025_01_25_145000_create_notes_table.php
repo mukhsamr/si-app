@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignIdFor(Student::class)->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->string('title');
-            $table->enum('unit', Unit::values());
+            $table->enum('unit', Unit::values())->nullable();
+            $table->string('category');
             $table->boolean('type')->default(0);
             $table->text('note');
             $table->string('file')->nullable();

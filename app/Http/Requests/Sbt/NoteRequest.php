@@ -17,7 +17,8 @@ class NoteRequest extends FormRequest
         return [
             'student_id' => 'required|exists:App\Models\Sbt\Student,id',
             'title' => 'required',
-            'unit' => 'required|in:' . implode(',', Unit::values()),
+            'unit' => 'in:' . implode(',', Unit::values()),
+            'category' => 'required',
             'note' => 'required',
             'type' => 'required|boolean',
             'file' => 'file',
