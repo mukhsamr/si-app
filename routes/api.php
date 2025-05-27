@@ -53,6 +53,7 @@ Route::prefix('sdt')->middleware('connection:sdt')->group(function () {
     Route::controller(SdtAuthController::class)->prefix('auth')->group(function () {
         Route::post('login', 'login');
         Route::post('logout', 'logout')->middleware('auth:sdt');
+
         Route::get('user', 'user')->middleware('auth:sdt');
     });
 
@@ -65,9 +66,11 @@ Route::prefix('sdt')->middleware('connection:sdt')->group(function () {
         Route::get('name-only', 'nameOnly')->name('.nameOnly');
         Route::get('import-template', 'import_template')->name('.template');
         Route::get('{student:uid}', 'show')->name('.show');
+
         Route::post('generate', 'generate')->name('.generate');
-        Route::put('update/{student}', 'update')->name('.update');
         Route::post('upload', 'upload')->name('.upload');
+
+        Route::put('update/{student}', 'update')->name('.update');
     });
 
     // Rak
@@ -78,22 +81,25 @@ Route::prefix('sdt')->middleware('connection:sdt')->group(function () {
     Route::controller(SdtDeviceController::class)->prefix('device')->name('device')->middleware('auth:sdt')->group(function () {
         Route::get('/', 'index')->name('.index');
         Route::get('summary', 'summary')->name('.summary');
-        Route::post('/', 'store')->name('.store');
+        Route::get('import-template', 'import_template')->name('.template');
         Route::get('{device:uid}', 'show')->name('.show');
-        Route::put('{device}', 'update')->name('.update');
-        Route::delete('{device}', 'destroy')->name('.destroy');
 
-        Route::get('import-template', 'import_template')->name('.template');
-        Route::put('{device}/assign', 'assign')->name('.assign');
-        Route::get('import-template', 'import_template')->name('.template');
+        Route::post('/', 'store')->name('.store');
         Route::post('upload', 'upload')->name('.upload');
+
+        Route::put('{device}', 'update')->name('.update');
+        Route::put('{device}/assign', 'assign')->name('.assign');
+
+        Route::delete('{device}', 'destroy')->name('.destroy');
     });
 
     // Loan
     Route::controller(SdtLoanController::class)->prefix('loans')->name('loans')->middleware('auth:sdt')->group(function () {
         Route::get('/', 'index')->name('.index');
         Route::get('{uid}', 'find')->name('.find');
+
         Route::post('/', 'store')->name('.store');
+
         Route::put('/', 'update')->name('.update');
     });
 });
