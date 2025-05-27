@@ -2,7 +2,8 @@
 
 namespace App\Models\Sdt;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,12 +25,11 @@ class Student extends Model
             'updated_at' => 'datetime:Y-m-d H:i:s',
         ];
     }
-    protected function photo(): Attribute
+
+    #[Scope]
+    protected function active(Builder $query): void
     {
-        $imagesPath = '/storage/images';
-        return Attribute::make(
-            get: fn($photo) => $photo ? url("{$imagesPath}/students/{$photo}") : null,
-        );
+        $query->where('is_active', 1);
     }
 
     function devices(): HasMany

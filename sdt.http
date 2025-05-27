@@ -1,11 +1,13 @@
 @baseUrl = https://si-app.test/api/sdt
-@token = {{Login.response.body.token}}
-@studentUid = 2034289562735
-@newUserId = {{StoreUser.response.body.user.id}}
-@newRakId = {{StoreRak.response.body.rak.id}}
-@newDeviceId = {{StoreDevice.response.body.device.id}}
+@token = {{Login.response.body.data.token}}
+@studentUid = 7452159423019
+@newUserId = {{StoreUser.response.body.data.id}}
+@newRakId = {{StoreRak.response.body.data.id}}
+@newDeviceUid = {{StoreDevice.response.body.data.uid}}
 @newLoanId = {{StoreLoan.response.body.loan.id}}
 
+
+@deviceUID = 0930610483491
 
 
 
@@ -62,7 +64,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "username": "user_baru_lagi",
+    "username": "user_baru_a",
     "password": "password",
     "role": "operator"
 }
@@ -112,14 +114,6 @@ Authorization: Bearer {{token}}
 
 ###
 
-# @name ShowStudent
-GET {{baseUrl}}/students/{{studentUid}} HTTP/1.1
-Accept: application/json
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-###
-
 # @name NameOnlyStudent
 GET {{baseUrl}}/students/name-only HTTP/1.1
 Accept: application/json
@@ -128,7 +122,15 @@ Authorization: Bearer {{token}}
 
 ###
 
-# @name UpdateStudents
+# @name ShowStudent
+GET {{baseUrl}}/students/{{studentUid}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# @name UpdateStudent
 PUT {{baseUrl}}/students/update HTTP/1.1
 Accept: application/json
 Content-Type: application/json
@@ -197,7 +199,7 @@ Authorization: Bearer {{token}}
 ### Devices ###
 
 # @name Devices
-GET {{baseUrl}}/devices HTTP/1.1
+GET {{baseUrl}}/device HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -205,29 +207,38 @@ Authorization: Bearer {{token}}
 ###
 
 # @name StoreDevice
-POST {{baseUrl}}/devices HTTP/1.1
+POST {{baseUrl}}/device HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
     "name": "Asus",
-    "uid": "876543245678",
+    "uid": "8743245678",
     "type": "1",
     "rak_id": "1"
 }
 
 ###
 
+# @name ShowDevice
+GET {{baseUrl}}/device/{{newDeviceUid}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+###
+
 # @name UpdateDevice
-PUT {{baseUrl}}/devices/{{newDeviceId}} HTTP/1.1
+PUT {{baseUrl}}/device/{{newDeviceUid}} HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
     "name": "Samsung",
-    "uid": "876543245678",
+    "uid": "09306210483491",
     "type": "0",
     "rak_id": "2"
 }
@@ -235,7 +246,7 @@ Authorization: Bearer {{token}}
 ###
 
 # @name DestroyDevice
-DELETE {{baseUrl}}/devices/{{newDeviceId}} HTTP/1.1
+DELETE {{baseUrl}}/device/{{newDeviceUid}} HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -243,7 +254,7 @@ Authorization: Bearer {{token}}
 ###
 
 # @name AssignDevice
-PUT {{baseUrl}}/devices/assign/{{newDeviceId}} HTTP/1.1
+PUT {{baseUrl}}/device/assign/{{newDeviceUid}} HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -255,13 +266,20 @@ Authorization: Bearer {{token}}
 ###
 
 # @name TemplateDevice
-GET {{baseUrl}}/devices/upload/template HTTP/1.1
+GET {{baseUrl}}/device/import-template HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 ###
 
+# @name SummaryDevice
+GET {{baseUrl}}/device/summary HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
 
 
 
@@ -284,8 +302,8 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "student_id": 2,
-    "device_id": 4,
+    "student_uid": "3520895443081",
+    "device_uid": "2474923175974",
     "user_id": 2
 }
 
@@ -305,5 +323,8 @@ Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
+{
+    "student_uid": "3520895443081",
+    "device_uid": "2474923175974"
+}
 ###
-

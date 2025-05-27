@@ -2,7 +2,11 @@
 
 namespace App\Http\Requests\Sdt;
 
+use App\Models\Sdt\Device;
+use App\Models\Sdt\Student;
+use App\Models\Sdt\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class LoanRequest extends FormRequest
 {
@@ -14,21 +18,36 @@ class LoanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'student_id' => 'required|exists:App\Models\Sdt\Student,id',
-            'device_id' => 'required|exists:App\Models\Sdt\Device,id',
-            'user_id' => 'required|exists:App\Models\Sdt\User,id',
+            'student_uid' => [
+                'required',
+                Rule::exists(Student::class, 'uid'),
+            ],
+            'device_uid' => [
+                'required',
+                Rule::exists(Device::class, 'uid')
+            ],
+            'user_id' => [
+                'required',
+                'sometimes',
+                Rule::exists(User::class, 'id'),
+            ],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'student_id.required' => 'Siswa wajib diisi',
-            'student_id.exists' => 'Siswa tidak ditemukan',
-            'device_id.required' => 'Device wajib diisi',
-            'device_id.exists' => 'Device tidak ditemukan',
-            'user_id.required' => 'User wajib diisi',
-            'user_id.exists' => 'User tidak ditemukan',
+            'required' => ':attribute tidak boleh kosong',
+            'exists'   => ':attribute tidak ditemukan',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'student_uid'   => 'Siswa',
+            'device_uid'    => 'Device',
+            'user_id'   => 'User',
         ];
     }
 }

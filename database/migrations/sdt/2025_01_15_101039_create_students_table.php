@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::connection('sdt')->create('students', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('nik')->unique();
-            $table->string('uid')->unique();
+            $table->string('nis')->unique();
+            $table->string('uid')->unique()->nullable();
             $table->string('photo')->nullable();
-            $table->boolean('campus')->default(false);
+            $table->boolean('gender')->default(false);
+            $table->boolean('is_active')->default(false);
             $table->timestamp('updated_at')->nullable();
         });
     }

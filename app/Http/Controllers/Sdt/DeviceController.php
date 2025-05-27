@@ -2,16 +2,25 @@
 
 namespace App\Http\Controllers\Sdt;
 
+use App\Exports\Sdt\DeviceTemplateExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sdt\DeviceRequest;
+use App\Http\Resources\Sdt\DeviceResource;
+use App\Imports\Sdt\UploadDeviceImport;
 use App\Models\Sdt\Device;
+use App\Models\Sdt\Student;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DeviceController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    function index(Request $request): JsonResource
     {
         $devices = Device::with(['rak', 'student'])
             ->when($request->rak_id !== null)
@@ -25,71 +34,151 @@ class DeviceController extends Controller
                     ->orWhere('uid', 'like', '%' . $request->name . '%');
             })
             ->orderBy('id', 'desc')
-            ->limit(10)
             ->get();
 
-        return response()->json([
-            'success' => true,
-            'devices' => $devices
-        ], 200);
+        return DeviceResource::collection($devices)
+            ->additional([
+                'message' => 'Get devices',
+                'status' => 'success'
+            ]);
     }
 
-    public function store(DeviceRequest $request): JsonResponse
+    function store(DeviceRequest $request): JsonResource
     {
         $device = Device::create($request->all());
-        return response()->json([
-            'success' => true,
-            'device' => $device
-        ], 201);
+
+        return DeviceResource::make($device)
+            ->additional([
+                'message' => 'Create device',
+                'status' => 'success'
+            ]);
     }
 
-    public function show(Device $device): JsonResponse
+    function show(Device $device): JsonResource
     {
+        return DeviceResource::make($device)
+            ->additional([
+                'message' => 'Get device',
+                'status' => 'success'
+            ]);
+    }
+
+    function update(DeviceRequest $request, Device $device)
+    {
+        $device->update($request->validated());
+
+        return DeviceResource::make($device)
+            ->additional([
+                'message' => 'Update device',
+                'status' => 'success'
+            ]);
+    }
+
+    function destroy(Device $device): JsonResponse
+    {
+        $device->delete();
+
         return response()->json([
-            'success' => true,
-            'device' => $device
+            'data' => null,
+            'status' => 'success',
+            'message' => 'Device deleted'
         ], 200);
     }
 
-    public function update(DeviceRequest $request, Device $device): JsonResponse
+    function assign(Request $request, Device $device)
     {
-        $device->update($request->all());
-        return response()->json([
-            'success' => true,
-            'device' => $device
-        ]);
-    }
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'student_id' => [
+                    'required',
+                    'sometimes',
+                    Rule::exists(Student::class, 'id'),
+                ],
+            ]
+        );
 
-    public function destroy(Device $device): JsonResponse
-    {
-        return response()->json([
-            'success' => $device->delete(),
-        ], 200);
-    }
+        if ($request->student_id !== null) {
+            $validator->after(function ($validator) use ($request, $device) {
+                if (
+                    Student::find($request->student_id)
+                    ->devices()
+                    ->where('type', $device->type)
+                    ->exists()
+                ) {
+                    $validator->errors()->add('type', 'Siswa sudah memiliki device dengan tipe yang sama.');
+                }
+            });
+        }
 
-    function assign(Request $request, Device $device): JsonResponse
-    {
-        $request->validate([
-            'student_id' => 'required|exists:App\Models\Sdt\Student,id'
-        ]);
-        $device->student_id = $request->student_id;
+        $validator->validate();
+
+        $device->student_id = $request->student_id ?? null;
         $device->save();
 
+        return DeviceResource::make($device)
+            ->additional([
+                'message' => 'Assign device',
+                'status' => 'success'
+            ]);
+    }
+
+    function import_template(): JsonResponse
+    {
+        Excel::store(new DeviceTemplateExport(), 'sdt/template-device.xlsx', 'public');
+
+        $file = Storage::disk('public')->exists('sdt/template-device.xlsx')
+            ? url('storage/sdt/template-device.xlsx')
+            : null;
+
+        if ($file === null) {
+            return response()->json([
+                'data' => null,
+                'status' => 'error',
+                'message' => 'Template device not found'
+            ], 404);
+        }
+
         return response()->json([
-            'success' => true,
-            'device' => $device
+            'data' => $file,
+            'status' => 'success',
+            'message' => 'Get template device'
         ], 200);
     }
 
-    function templateDevice(): JsonResponse
+    function upload(Request $request): JsonResponse
     {
-        $file = Storage::disk('public')->exists('sdt/template-device.csv')
-            ? url('storage/sdt/template-device.csv')
-            : null;
+        $import = new UploadDeviceImport();
+        $import->import($request->file('file'), 'public', \Maatwebsite\Excel\Excel::XLSX);
 
         return response()->json([
-            'success' => true,
-            'file' => $file
+            'data' => $import->getResult(),
+            'status' => 'success',
+            'message' => 'Berhasil Upload device'
         ], 200);
+    }
+
+    function summary(): JsonResponse
+    {
+        $devices = Device::withCount(['loans' => function ($query) {
+            $query->where('is_returned', 0);
+        }])->get();
+
+        $summaries = $devices
+            ->groupBy('type')
+            ->map(function ($group, $type) {
+                return [
+                    'type'  => (int) $type,
+                    'count' => $group->count(),
+                    'loans' => $group->sum('loans_count'),
+                ];
+            })
+            ->values();
+
+        return response()->json([
+            'data' => $summaries,
+            'message' => 'Get loan summary successfully',
+            'status' => 'success'
+        ]);
     }
 }

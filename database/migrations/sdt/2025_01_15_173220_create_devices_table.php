@@ -17,9 +17,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('uid')->unique();
-            $table->boolean('type')->default(false);
-            $table->foreignIdFor(Rak::class)->constrained();
+            $table->unsignedTinyInteger('type')->default(0);
+            $table->foreignIdFor(Rak::class)->nullable()->constrained();
             $table->foreignIdFor(Student::class)->nullable()->constrained();
+
+            $table->unique(['student_id', 'type']);
         });
     }
 

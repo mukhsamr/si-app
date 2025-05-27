@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Sdt;
 
+use App\Models\Sdt\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
 {
@@ -14,21 +16,39 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required|unique:App\Models\Sdt\User,username,' . $this->user?->id,
-            'password' => 'sometimes|required|min:8',
-            'role' => 'sometimes|required|in:admin,operator,student',
+            'username' => [
+                'required',
+                Rule::unique(User::class, 'username')->ignore($this->user),
+            ],
+            'password' => [
+                'sometimes',
+                'required',
+                'min:8'
+            ],
+            'role' => [
+                'sometimes',
+                'required',
+                Rule::in(['admin', 'operator', 'student'])
+            ],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'username.required' => 'Username wajib diisi.',
-            'username.unique' => 'Username sudah digunakan.',
-            'password.required' => 'Password wajib diisi.',
-            'password.min' => 'Password harus terdiri dari 8 karakter atau lebih.',
-            'role.required' => 'Role wajib diisi.',
-            'role.in' => 'Role tidak valid.',
+            'required' => ':attribute tidak boleh kosong',
+            'unique' => ':attribute telah digunakan',
+            'min' => ':attribute harus terdiri dari 8 karakter atau lebih',
+            'in' => ':attribute tidak valid',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'username' => 'Username',
+            'password' => 'Password',
+            'role' => 'Role',
         ];
     }
 }

@@ -4,50 +4,88 @@ namespace App\Http\Controllers\Sdt;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sdt\RakRequest;
+use App\Http\Resources\Sdt\RakResource;
+use App\Models\Sdt\Device;
 use App\Models\Sdt\Rak;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class RakController extends Controller
 {
-    public function index(): JsonResponse
+    function index(Request $request): JsonResource
     {
+        $raks = Rak::when($request->has('with_devices'))
+            ->with('devices.student')
+            ->when($request->has('with_count_devices'))
+            ->withCount('devices')
+            ->get();
+
+        return RakResource::collection($raks)
+            ->additional([
+                'message' => 'Get raks successfully',
+                'status' => 'success'
+            ]);
+    }
+
+    function store(RakRequest $request): JsonResource
+    {
+        $rak = Rak::create($request->validated());
+
+        return RakResource::make($rak)
+            ->additional([
+                'message' => 'Create rak successfully',
+                'status' => 'success'
+            ]);
+    }
+
+    function show(Rak $rak): JsonResource
+    {
+        return RakResource::make($rak->load('devices'))
+            ->additional([
+                'message' => 'Get rak successfully',
+                'status' => 'success'
+            ]);
+    }
+
+    function update(RakRequest $request, Rak $rak): JsonResource
+    {
+        $rak->update($request->validated());
+
+        return RakResource::make($rak)
+            ->additional([
+                'message' => 'Update rak successfully',
+                'status' => 'success',
+            ]);
+    }
+
+    function destroy(Rak $rak): JsonResponse
+    {
+        if ($rak->devices()->count() > 0) {
+            return response()->json([
+                'data' => null,
+                'message' => 'Rak has devices',
+                'status' => 'error'
+            ], 400);
+        }
+
+        $rak->delete();
         return response()->json([
-            'success' => true,
-            'raks' => Rak::withCount('devices')->get(),
+            'data' => null,
+            'message' => 'Rak deleted successfully',
+            'status' => 'success'
         ], 200);
     }
 
-    public function store(RakRequest $request): JsonResponse
+    function assign(Request $request, Rak $rak): JsonResource
     {
-        $rak = Rak::create($request->all());
-        return response()->json([
-            'success' => true,
-            'rak' => $rak,
-        ], 201);
-    }
+        $rak->devices()->update(['rak_id' => null]);
+        Device::whereIn('id', $request->device_ids)->update(['rak_id' => $rak->id]);
 
-    public function show(Rak $rak): JsonResponse
-    {
-        return response()->json([
-            'success' => true,
-            'rak' => $rak
-        ], 200);
-    }
-
-    public function update(RakRequest $request, Rak $rak): JsonResponse
-    {
-        $rak->update($request->all());
-        return response()->json([
-            'success' => true,
-            'rak' => $rak
-        ], 200);
-    }
-
-    public function destroy(Rak $rak): JsonResponse
-    {
-        return response()->json([
-            'success' => $rak->delete()
-        ], 200);
+        return RakResource::make($rak->load('devices'))
+            ->additional([
+                'message' => 'Assign device to rak successfully',
+                'status' => 'success'
+            ]);
     }
 }

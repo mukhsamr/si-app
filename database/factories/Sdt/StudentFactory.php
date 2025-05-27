@@ -19,9 +19,10 @@ class StudentFactory extends Factory
         $gender = fake()->boolean();
         return [
             'name' => fake()->name($gender ? 'male' : 'female'),
-            'nik' => fake()->unique()->nik(),
+            'nis' => fake()->unique()->nik(),
             'uid' => fake()->unique()->ean13(),
-            'campus' => $gender,
+            'gender' => $gender,
+            'is_active' => 1,
         ];
     }
 }

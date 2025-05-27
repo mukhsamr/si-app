@@ -4,16 +4,19 @@ namespace App\Http\Controllers\Sdt;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sdt\LoanRequest;
+use App\Http\Resources\Sdt\LoanResource;
+use App\Models\Sdt\Device;
 use App\Models\Sdt\Loan;
 use App\Models\Sdt\Student;
 use Carbon\CarbonInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
 
 class LoanController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    function index(Request $request): JsonResource
     {
         $start_date = $request->start_date ? Carbon::createFromFormat('Y-m-d', $request->start_date)->format('Y-m-d 00:00:00') : null;
         $end_date = $request->end_date ? Carbon::createFromFormat('Y-m-d', $request->end_date)->format('Y-m-d 23:59:59') : null;
@@ -32,8 +35,8 @@ class LoanController extends Controller
             ->whereRelation('device', 'rak_id', $request->rak)
             ->when($request->type !== null)
             ->whereRelation('device', 'type', $request->type)
-            ->latest()
-            ->limit(10)
+            ->latest('updated_at')
+            ->limit(100)
             ->get();
 
         $loans->map(function ($loan) {
@@ -45,37 +48,95 @@ class LoanController extends Controller
             ]);
         });
 
-        return response()->json([
-            'loans' => $loans,
-            'tes' => $request->is_returned
-        ], 200);
+        return LoanResource::collection($loans)
+            ->additional([
+                'message' => 'Get loan successfully',
+                'status' => 'success'
+            ]);
     }
 
-    public function store(LoanRequest $request): JsonResponse
+    function store(LoanRequest $request): JsonResource | JsonResponse
     {
-        $loan = Loan::create($request->all());
-        return response()->json([
-            'loan' => $loan
-        ], 201);
+        $student = Student::firstWhere('uid', $request->student_uid);
+        $device = Device::where('uid', $request->device_uid)
+            ->isNotLoaned()
+            ->first();
+
+        if ($device === null) {
+            return response()->json([
+                'error' => ['Device' => 'Device ini sedang dipinjam'],
+                'status' => 'error'
+            ], 404);
+        }
+
+        if ($device->student_id !== $student->id && $device->student_id !== null) {
+            return response()->json([
+                'error' => ['Device' => 'Device bukan milik siswa ini'],
+                'status' => 'error'
+            ], 404);
+        }
+
+        if ($device->student_id === $student->id || $device->student_id === null) {
+            $loan = Loan::create([
+                'student_id' => $student->id,
+                'device_id' => $device->id,
+                'user_id' => $request->user_id
+            ]);
+        }
+
+        return LoanResource::make($loan)
+            ->additional([
+                'message' => 'Loan created',
+                'status' => 'success'
+            ]);
     }
 
-    public function update(Loan $loan): JsonResponse
+    function update(LoanRequest $request): JsonResource | JsonResponse
     {
-        $loan->update(['is_returned' => true]);
-        return response()->json([
-            'loan' => $loan
-        ], 200);
+        $student = Student::firstWhere('uid', $request->student_uid);
+        $device = Device::where('uid', $request->device_uid)
+            ->isLoaned()
+            ->first();
+
+        if ($device === null) {
+            return response()->json([
+                'message' => ['Device' => 'Device tidak sedang dipinjam'],
+                'status' => 'error'
+            ], 404);
+        }
+
+        if ($device->student_id !== $student->id) {
+            return response()->json([
+                'message' => ['Device' => 'Device bukan milik siswa ini'],
+                'status' => 'error'
+            ], 404);
+        }
+
+        if ($device->student_id === $student->id || $device->student_id === null) {
+            $loan = Loan::where('device_id', $device->id)->where('is_returned', false)->first();
+            $loan->update([
+                'is_returned' => true
+            ]);
+        }
+
+        return LoanResource::make($loan)
+            ->additional([
+                'message' => 'Loan is returned',
+                'status' => 'success'
+            ]);
     }
 
-    function find(string $uid): JsonResponse
+    function find(string $uid): JsonResource
     {
         $student = Student::with([
             'devices',
             'loans' => fn($query) => $query->isNotReturned()
         ])->firstWhere('uid', $uid);
 
-        return response()->json([
-            'student' => $student
-        ], 200);
+        return LoanResource::make($student)
+            ->additional([
+                'message' => 'Get loan successfully',
+                'status' => 'success'
+            ]);
     }
 }

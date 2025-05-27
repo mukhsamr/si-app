@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Sdt;
 
+use App\Models\Sdt\Rak;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RakRequest extends FormRequest
 {
@@ -14,7 +16,10 @@ class RakRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|unique:App\Models\Sdt\Rak,name,' . $this->rak?->id,
+            'name' => [
+                'required',
+                Rule::unique(Rak::class, 'name')->ignore($this->rak),
+            ],
         ];
     }
 

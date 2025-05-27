@@ -37,9 +37,13 @@ class Student extends Model
 
     protected function photo(): Attribute
     {
-        $imagesPath = '/storage/students/photo';
+        $imagesPath = '/storage/students/avatar';
         return Attribute::make(
-            get: fn($photo) => $photo ? url("{$imagesPath}/{$photo}") : null,
+            get: fn($photo) => $photo
+                ? url("{$imagesPath}/{$photo}")
+                : ($this->gender == 1
+                    ? url("{$imagesPath}/l.webp")
+                    : url("{$imagesPath}/p.webp")),
         );
     }
 
@@ -54,7 +58,9 @@ class Student extends Model
     protected function age(): Attribute
     {
         return Attribute::make(
-            get: fn(mixed $value, array $attributes) => Carbon::parse($attributes['birth_date'])->age
+            get: fn(mixed $value, array $attributes) => isset($attributes['birth_date'])
+                ? Carbon::parse($attributes['birth_date'])->age
+                : null
         );
     }
 

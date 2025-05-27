@@ -30,8 +30,13 @@ class Device extends Model
         return $this->hasMany(Loan::class);
     }
 
+    function scopeIsLoaned($query)
+    {
+        $query->whereHas('loans', fn($q) => $q->isReturned(0));
+    }
+
     function scopeIsNotLoaned($query)
     {
-        $query->whereDoesntHave('loans', fn($query) => $query->isNotReturned());
+        $query->whereDoesntHave('loans', fn($q) => $q->isReturned(0));
     }
 }
